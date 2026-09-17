@@ -1,0 +1,73 @@
+import Link from "next/link";
+
+export default function Footer() {
+  return (
+    <footer className="site-footer">
+      <div className="container">
+        <div className="footer-grid">
+          <div className="footer-brand">
+            <Link href="/" className="brand">
+              <span className="brand-mark">K</span>
+              Komplai
+            </Link>
+            <p>Business compliance, made simpler.</p>
+          </div>
+
+          <div>
+            <h4>Navigation</h4>
+            <ul>
+              <li>
+                <Link href="/#product">Product</Link>
+              </li>
+              <li>
+                <Link href="/explore">Explore</Link>
+              </li>
+              <li>
+                <Link href="/assessment">Assessment</Link>
+              </li>
+              <li>
+                <Link href="/#compliance-areas">Compliance Areas</Link>
+              </li>
+              <li>
+                <Link href="/#how-it-works">How It Works</Link>
+              </li>
+            </ul>
+          </div>
+
+          <div>
+            <h4>Account</h4>
+            <ul>
+              <li>
+                <Link href="/login">Log in</Link>
+              </li>
+              <li>
+                <Link href="/signup">Sign up</Link>
+              </li>
+            </ul>
+          </div>
+
+          <div>
+            <h4>Legal</h4>
+            <ul>
+              <li>
+                <Link href="/privacy">Privacy</Link>
+              </li>
+              <li>
+                <Link href="/terms">Terms</Link>
+              </li>
+              <li>
+                <a href="#disclaimer">Disclaimer</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div className="footer-disclaimer" id="disclaimer">
+          Komplai provides informational compliance guidance. Applicability
+          and requirements may depend on your business, current laws,
+          regulations and official guidance.
+        </div>
+      </div>
+    </footer>
+  );
+}
