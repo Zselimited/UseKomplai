@@ -1951,6 +1951,70 @@ form {
   font-size: 0.82rem;
 }
 
+.deadline-list {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.deadline-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.9rem 1.1rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--white);
+  flex-wrap: wrap;
+}
+
+.deadline-row-main {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.deadline-row h4 {
+  font-size: 0.92rem;
+  color: var(--ink);
+  margin-bottom: 0.15rem;
+}
+
+.deadline-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.deadline-badge.deadline-overdue {
+  background: #fde2e1;
+  color: #b3261e;
+}
+
+.deadline-badge.deadline-urgent {
+  background: var(--soft-orange);
+  color: var(--orange);
+}
+
+.deadline-badge.deadline-soon {
+  background: #fff6da;
+  color: #8a6d00;
+}
+
+.deadline-badge.deadline-later {
+  background: var(--soft-evergreen);
+  color: var(--evergreen);
+}
+
+.deadline-badge.deadline-unconfirmed {
+  background: var(--bg);
+  color: var(--muted);
+}
+
 .locked-row {
   display: flex;
   align-items: center;

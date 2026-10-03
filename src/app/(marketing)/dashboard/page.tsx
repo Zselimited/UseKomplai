@@ -9,7 +9,8 @@ import {
   toEngineRules,
   type ObligationStatus,
 } from "@/lib/complianceEngine";
-import { IconBuilding, IconHelpCircle } from "@/components/icons";
+import { getNextDueDate, urgency } from "@/lib/dueDates";
+import { IconBuilding, IconHelpCircle, IconClock } from "@/components/icons";
 import SignOutButton from "./SignOutButton";
 import AccountDetailsCard from "./AccountDetailsCard";
 import OfficerCard from "./OfficerCard";
@@ -96,6 +97,21 @@ export default async function DashboardPage() {
   const obligations = await getBusinessObligations(supabase, business.id);
   const obligationByCode = new Map(obligations.map((o) => [o.ruleCode, o]));
 
+  // Only an obligation Rulla is actually confident applies gets a deadline
+  // shown — there's no point telling someone when a filing is due for an
+  // area that doesn't (or might not) apply to them.
+  const deadlines = DISPLAY_AREAS.filter((area) => obligationByCode.get(area.code)?.applicabilityStatus === "likely_applicable")
+    .map((area) => ({
+      area,
+      due: getNextDueDate(area.code, business.business_type),
+    }))
+    .sort((a, b) => {
+      if (a.due.kind === "confirmed" && b.due.kind === "confirmed") return a.due.daysUntil - b.due.daysUntil;
+      if (a.due.kind === "confirmed") return -1;
+      if (b.due.kind === "confirmed") return 1;
+      return 0;
+    });
+
   return (
     <main className="page-wide dashboard-shell">
       <aside className="dashboard-rail">
@@ -155,6 +171,52 @@ export default async function DashboardPage() {
               </dd>
             </div>
           </dl>
+        </section>
+
+        <section className="card" style={{ marginBottom: "1.25rem" }}>
+          <h2 style={{ fontSize: "1.1rem", marginBottom: "1rem" }}>Upcoming deadlines</h2>
+
+          {deadlines.length === 0 ? (
+            <p className="muted">
+              No confirmed deadlines yet — this fills in once an area is
+              marked likely applicable to your business.
+            </p>
+          ) : (
+            <div className="deadline-list">
+              {deadlines.map(({ area, due }) => (
+                <div className="deadline-row" key={area.code}>
+                  <div className="deadline-row-main">
+                    <span className="icon-tile" style={{ marginBottom: 0 }}>
+                      <IconClock />
+                    </span>
+                    <div>
+                      <h4>
+                        {area.code} · {due.label}
+                      </h4>
+                      {due.kind === "unconfirmed" && (
+                        <p className="muted" style={{ fontSize: "0.82rem" }}>
+                          Cadence known, but Rulla hasn&apos;t confirmed the exact day — check with the Nigeria Revenue Service or a professional.
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                  {due.kind === "confirmed" ? (
+                    <span className={`deadline-badge deadline-${urgency(due.daysUntil)}`}>
+                      {due.nextDueDate.toLocaleDateString("en-NG", { day: "numeric", month: "short", year: "numeric" })}
+                      {" · "}
+                      {due.daysUntil < 0
+                        ? `${Math.abs(due.daysUntil)}d overdue`
+                        : due.daysUntil === 0
+                          ? "Due today"
+                          : `in ${due.daysUntil}d`}
+                    </span>
+                  ) : (
+                    <span className="deadline-badge deadline-unconfirmed">Not yet confirmed</span>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
         </section>
 
         <section className="card">
