@@ -8,9 +8,11 @@ import type { UserProfile } from "@/lib/supabase/queries";
 export default function AccountDetailsCard({
   profile,
   fallbackEmail,
+  businessName,
 }: {
   profile: UserProfile | null;
   fallbackEmail: string;
+  businessName: string;
 }) {
   const router = useRouter();
   const [editing, setEditing] = useState(false);
@@ -69,9 +71,7 @@ export default function AccountDetailsCard({
             <h1 style={{ fontSize: "1.3rem" }}>
               {firstName ? `Welcome back, ${firstName}!` : "Welcome back!"}
             </h1>
-            <p className="muted" style={{ fontSize: "0.85rem" }}>
-              {profile?.email ?? fallbackEmail}
-            </p>
+            <p className="muted" style={{ fontSize: "0.85rem" }}>{businessName}</p>
           </div>
         </div>
         {!editing && (

@@ -128,7 +128,7 @@ export default async function DashboardPage() {
   return (
     <main className="page-wide dashboard-shell">
       <aside className="dashboard-rail">
-        <AccountDetailsCard profile={userProfile} fallbackEmail={user.email ?? ""} />
+        <AccountDetailsCard profile={userProfile} fallbackEmail={user.email ?? ""} businessName={business.legal_name} />
 
         <section className="card" style={{ marginBottom: "1.25rem" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "0.85rem" }}>

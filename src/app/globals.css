@@ -1959,6 +1959,24 @@ form {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
   gap: 1rem;
+  max-height: 600px;
+  overflow-y: auto;
+  padding-right: 0.5rem;
+  margin-right: -0.5rem;
+  align-content: start;
+}
+
+.obligation-grid::-webkit-scrollbar {
+  width: 8px;
+}
+
+.obligation-grid::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 999px;
+}
+
+.obligation-grid::-webkit-scrollbar-thumb:hover {
+  background: var(--muted);
 }
 
 .obligation-card {
