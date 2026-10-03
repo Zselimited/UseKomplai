@@ -147,11 +147,8 @@ export default function AssessmentFlow() {
     {phase === "results" && (
       <div className="modal-overlay">
         <div className="modal-card">
-          <h2 style={{ fontSize: "1.3rem" }}>Sign in to see your result</h2>
-          <p className="muted">
-            Create a free account or log in to view your compliance
-            assessment.
-          </p>
+          <h2 style={{ fontSize: "1.3rem" }}>Congratulations!</h2>
+          <p className="muted">Log in to see your results.</p>
           <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
             <Link href="/signup?next=/onboarding" className="btn btn-primary btn-lg">
               Create Free Account
