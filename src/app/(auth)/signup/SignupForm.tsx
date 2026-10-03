@@ -4,10 +4,11 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase/client";
-import { IconMail, IconLock, IconEye, IconEyeOff, IconArrowRight } from "@/components/icons";
+import { IconMail, IconLock, IconEye, IconEyeOff, IconArrowRight, IconUser } from "@/components/icons";
 
 export default function SignupForm({ next }: { next: string }) {
   const router = useRouter();
+  const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -23,6 +24,9 @@ export default function SignupForm({ next }: { next: string }) {
     const { data, error: signUpError } = await supabase.auth.signUp({
       email,
       password,
+      // Read by the handle_new_user() DB trigger, which copies it into
+      // profiles.full_name — no separate profile-creation call needed.
+      options: { data: { full_name: fullName.trim() } },
     });
 
     setSubmitting(false);
@@ -57,6 +61,22 @@ export default function SignupForm({ next }: { next: string }) {
   return (
     <>
       <form onSubmit={handleSubmit}>
+        <div className="field">
+          <label htmlFor="fullName">Full name</label>
+          <div className="field-input-group">
+            <IconUser />
+            <input
+              id="fullName"
+              name="fullName"
+              type="text"
+              autoComplete="name"
+              required
+              value={fullName}
+              onChange={(event) => setFullName(event.target.value)}
+            />
+          </div>
+        </div>
+
         <div className="field">
           <label htmlFor="email">Email</label>
           <div className="field-input-group">

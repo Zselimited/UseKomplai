@@ -31,6 +31,31 @@ export type BusinessProfile = {
   diagnostic_completed_at: string | null;
 };
 
+export type UserProfile = {
+  id: string;
+  full_name: string;
+  email: string;
+  phone: string | null;
+};
+
+/**
+ * The current user's own profiles row. No filter is needed beyond RLS —
+ * profiles_select_own already restricts this to exactly one row
+ * (auth.uid() = id), so an unfiltered select behaves like "my profile".
+ */
+export async function getUserProfile(supabase: SupabaseClient): Promise<UserProfile | null> {
+  const { data, error } = await supabase
+    .from("profiles")
+    .select("id, full_name, email, phone")
+    .maybeSingle();
+
+  if (error) {
+    throw error;
+  }
+
+  return data;
+}
+
 /**
  * Returns the first business the current user is a member of (via RLS —
  * this can only ever return businesses they legitimately belong to), or

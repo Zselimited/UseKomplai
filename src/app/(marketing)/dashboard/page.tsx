@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import { getUserBusiness, getBusinessProfile, getApprovedRules, getBusinessObligations } from "@/lib/supabase/queries";
+import { getUserBusiness, getBusinessProfile, getUserProfile, getApprovedRules, getBusinessObligations } from "@/lib/supabase/queries";
 import {
   STATUS_LABELS,
   businessProfileToEvaluationInput,
@@ -11,6 +11,7 @@ import {
 } from "@/lib/complianceEngine";
 import { IconBuilding, IconHelpCircle, IconMessageQuestion } from "@/components/icons";
 import SignOutButton from "./SignOutButton";
+import AccountDetailsCard from "./AccountDetailsCard";
 
 // The five MVP compliance areas Rulla covers. Only areas with a saved
 // business_obligations row (i.e. an approved rule existed at onboarding
@@ -65,6 +66,7 @@ export default async function DashboardPage() {
   }
 
   const profile = await getBusinessProfile(supabase, business.id);
+  const userProfile = await getUserProfile(supabase);
 
   // Re-run the engine against the currently approved rules on every view,
   // rather than trusting whatever was saved at onboarding time — a rule
@@ -95,6 +97,8 @@ export default async function DashboardPage() {
 
   return (
     <main className="page-wide">
+      <AccountDetailsCard profile={userProfile} fallbackEmail={user.email ?? ""} />
+
       <div
         style={{
           display: "flex",
@@ -110,7 +114,7 @@ export default async function DashboardPage() {
             <IconBuilding />
           </span>
           <div>
-            <h1 style={{ fontSize: "1.5rem" }}>{business.legal_name}</h1>
+            <h2 style={{ fontSize: "1.2rem" }}>{business.legal_name}</h2>
             <p className="muted" style={{ fontSize: "0.85rem" }}>
               {business.business_type
                 ? BUSINESS_TYPE_LABELS[business.business_type] ?? business.business_type

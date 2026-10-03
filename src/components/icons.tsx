@@ -213,6 +213,15 @@ export function IconEyeOff({ className }: IconProps) {
   );
 }
 
+export function IconUser({ className }: IconProps) {
+  return (
+    <svg {...base} className={className} aria-hidden="true">
+      <circle cx="12" cy="8" r="3.5" />
+      <path d="M5 20c0-3.6 3.1-6.5 7-6.5s7 2.9 7 6.5" />
+    </svg>
+  );
+}
+
 export function IconMail({ className }: IconProps) {
   return (
     <svg {...base} className={className} aria-hidden="true">

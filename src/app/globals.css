@@ -320,6 +320,20 @@ main {
   color: var(--green);
 }
 
+.avatar-circle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--evergreen), var(--evergreen-dark));
+  color: var(--white);
+  font-weight: 700;
+  font-size: 1.15rem;
+}
+
 /* ==========================================================================
    Badges / status pills
    ========================================================================== */

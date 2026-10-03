@@ -5,8 +5,6 @@ import {
   IconCheckCircle,
   IconAlertCircle,
   IconClock,
-  IconCompass,
-  IconClipboardCheck,
   IconLayers,
   IconBuilding,
   IconUsers,
@@ -21,12 +19,6 @@ const VIZ_ITEMS = [
   { code: "PAYE", label: "PAYE", status: "likely_applicable", statusLabel: "Likely applicable" },
   { code: "WHT", label: "Withholding Tax", status: "may_apply", statusLabel: "May apply" },
   { code: "CIT", label: "Company Income Tax", status: "likely_applicable", statusLabel: "Likely applicable" },
-];
-
-const VALUE_STRIP = [
-  { icon: IconCompass, title: "Understand", body: "Know which compliance areas may apply to your business." },
-  { icon: IconClipboardCheck, title: "Assess", body: "Answer a few questions and get a personalised preliminary assessment." },
-  { icon: IconAlertCircle, title: "Act", body: "Organise what needs attention and manage it from one place." },
 ];
 
 const HOW_IT_WORKS = [
@@ -50,10 +42,6 @@ const FAQ = [
     a: "Rulla is a platform that helps Nigerian businesses understand, assess and organise the compliance areas that may apply to them, in one place.",
   },
   {
-    q: "Who is Rulla for?",
-    a: "Founders, growing businesses, finance and operations teams, and professional advisors who want a clearer view of business compliance.",
-  },
-  {
     q: "Can I check my compliance without creating an account?",
     a: "Yes. The compliance assessment is free to start and doesn't require an account — you'll only need one if you want to save your results.",
   },
@@ -68,14 +56,6 @@ const FAQ = [
   {
     q: "Which compliance areas does Rulla cover?",
     a: "Today, Rulla covers CAC annual returns, VAT, PAYE, withholding tax and company income tax, with more areas planned.",
-  },
-  {
-    q: "Can I save my assessment?",
-    a: "Yes. Once you complete the assessment, you can create a free account to save your results and continue from your dashboard.",
-  },
-  {
-    q: "How does Rulla determine what may apply to my business?",
-    a: "Your answers are compared against general compliance criteria to produce a preliminary view. It's a starting point, not a final determination — always confirm specifics for your situation.",
   },
 ];
 
@@ -155,27 +135,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ============ 2. Trust / value strip ============ */}
-      <section className="section" style={{ paddingTop: 0 }}>
-        <div className="container">
-          <Reveal className="statement">
-            <h2>Compliance shouldn&apos;t be something you discover when there&apos;s a problem.</h2>
-          </Reveal>
-          <div className="value-strip-grid" style={{ marginTop: "2.5rem" }}>
-            {VALUE_STRIP.map((item, i) => (
-              <Reveal key={item.title} className={`card reveal-delay-${i + 1}`}>
-                <span className="icon-tile">
-                  <item.icon />
-                </span>
-                <h3>{item.title}</h3>
-                <p>{item.body}</p>
-              </Reveal>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ============ 3. How it works ============ */}
+      {/* ============ How it works ============ */}
       <section className="section" id="how-it-works">
         <div className="container">
           <div className="section-head">
@@ -198,55 +158,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ============ 4. Personalized assessment ============ */}
-      <section className="section" style={{ background: "var(--white)", borderTop: "1px solid var(--border)", borderBottom: "1px solid var(--border)" }}>
-        <div className="container">
-          <div className="split-grid">
-            <div className="split-copy">
-              <span className="eyebrow">The assessment</span>
-              <h2>What does compliance look like for YOUR business?</h2>
-              <p style={{ marginTop: "0.85rem", marginBottom: "1.75rem", fontSize: "1.05rem" }}>
-                Answer a few simple questions and get a personalised view
-                of the compliance areas that may apply to your business.
-              </p>
-              <Link href="/assessment" className="btn btn-primary btn-lg">
-                Start My Compliance Assessment
-                <IconArrowRight className="btn-arrow" />
-              </Link>
-              <div className="hero-microcopy" style={{ marginTop: "1.25rem" }}>
-                <IconCheckCircle />
-                Start free — create an account only if you want to save your results.
-              </div>
-            </div>
-
-            <Reveal className="split-visual">
-              <div className="viz-panel mini-assessment-card" aria-hidden="true">
-                <div className="assessment-progress-head">
-                  <span>Question 4 of 8</span>
-                  <span>50%</span>
-                </div>
-                <div className="assessment-progress-track">
-                  <div className="assessment-progress-fill" style={{ width: "50%" }} />
-                </div>
-                <h4>Does your business have employees?</h4>
-                <div className="option-grid">
-                  <div className="option-card is-selected">
-                    Yes
-                    <span className="check">
-                      <IconCheckCircle />
-                    </span>
-                  </div>
-                  <div className="option-card">
-                    No<span className="check" />
-                  </div>
-                </div>
-              </div>
-            </Reveal>
-          </div>
-        </div>
-      </section>
-
-      {/* ============ 5. Compliance areas ============ */}
+      {/* ============ Compliance areas ============ */}
       <section className="section" id="compliance-areas">
         <div className="container">
           <div className="section-head">
@@ -273,7 +185,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ============ 6. Product experience ============ */}
+      {/* ============ Product experience ============ */}
       <section className="section" id="product">
         <div className="container">
           <div className="section-head">
@@ -377,7 +289,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ============ 7. FAQ ============ */}
+      {/* ============ FAQ ============ */}
       <section className="section">
         <div className="container">
           <div className="section-head">
@@ -394,30 +306,6 @@ export default function HomePage() {
               </details>
             ))}
           </div>
-        </div>
-      </section>
-
-      {/* ============ 8. Final CTA ============ */}
-      <section className="section">
-        <div className="container">
-          <Reveal>
-            <div className="final-cta">
-              <h2>Know what may apply to your business.</h2>
-              <p style={{ maxWidth: "50ch", margin: "0 auto" }}>
-                Start with a few simple questions and get a clearer view
-                of your business compliance.
-              </p>
-              <div className="cta-row">
-                <Link href="/assessment" className="btn btn-primary btn-lg">
-                  Check My Compliance
-                  <IconArrowRight className="btn-arrow" />
-                </Link>
-                <Link href="/explore" className="btn btn-outline btn-lg">
-                  Explore Compliance
-                </Link>
-              </div>
-            </div>
-          </Reveal>
         </div>
       </section>
     </main>
