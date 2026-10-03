@@ -8,6 +8,7 @@ import { IconMenu, IconX } from "./icons";
 const NAV_LINKS = [
   { href: "/#how-it-works", label: "How It Works" },
   { href: "/#compliance-areas", label: "Compliance Areas" },
+  { href: "/calculator", label: "Tax Calculator" },
 ];
 
 export default function Header() {

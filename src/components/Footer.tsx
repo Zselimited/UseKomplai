@@ -25,6 +25,9 @@ export default function Footer() {
               <li>
                 <Link href="/#how-it-works">How It Works</Link>
               </li>
+              <li>
+                <Link href="/calculator">Tax Calculator</Link>
+              </li>
             </ul>
           </div>
 

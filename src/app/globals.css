@@ -322,6 +322,63 @@ main {
   color: var(--green);
 }
 
+.calc-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+@media (max-width: 760px) {
+  .calc-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.field-toggle-row {
+  display: inline-flex;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0.25rem;
+  gap: 0.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.toggle-btn {
+  border: none;
+  background: transparent;
+  padding: 0.5rem 1rem;
+  border-radius: calc(var(--radius-sm) - 2px);
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--muted);
+  cursor: pointer;
+  transition: background 0.15s var(--ease), color 0.15s var(--ease);
+}
+
+.toggle-btn.is-active {
+  background: var(--evergreen);
+  color: var(--white);
+}
+
+.band-table {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.band-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  font-size: 0.82rem;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.band-row:last-child {
+  border-bottom: none;
+}
+
 .dashboard-shell {
   display: flex;
   align-items: flex-start;
