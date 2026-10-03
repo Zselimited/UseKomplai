@@ -1951,6 +1951,157 @@ form {
   font-size: 0.82rem;
 }
 
+/* ==========================================================================
+   Compliance Obligations grid (dashboard)
+   ========================================================================== */
+
+.obligation-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 1rem;
+}
+
+.obligation-card {
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--white);
+  overflow: hidden;
+  opacity: 0;
+  animation: obligationIn 0.4s var(--ease) both;
+  transition: border-color 0.2s var(--ease), box-shadow 0.2s var(--ease), transform 0.2s var(--ease);
+}
+
+.obligation-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
+}
+
+@keyframes obligationIn {
+  from { opacity: 0; transform: translateY(12px) scale(0.97); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .obligation-card {
+    animation: none;
+    opacity: 1;
+  }
+}
+
+.obligation-card.is-positive { border-color: #bfe3d3; }
+.obligation-card.is-warning { border-color: #f3d4ae; }
+.obligation-card.is-neutral { border-color: var(--border); }
+
+.obligation-card.is-positive:hover { border-color: var(--evergreen); }
+.obligation-card.is-warning:hover { border-color: var(--orange); }
+
+.obligation-card-trigger {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 1.1rem 1.1rem 0.5rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+}
+
+.obligation-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: var(--bg);
+  color: var(--muted);
+}
+
+.obligation-card.is-positive .obligation-icon {
+  background: var(--soft-evergreen);
+  color: var(--evergreen);
+}
+
+.obligation-card.is-warning .obligation-icon {
+  background: var(--soft-orange);
+  color: var(--orange);
+}
+
+.obligation-card-trigger-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.obligation-code {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+}
+
+.obligation-card-trigger-text h4 {
+  font-size: 0.98rem;
+  color: var(--ink);
+}
+
+.obligation-chevron {
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  color: var(--muted);
+  transition: transform 0.25s var(--ease);
+}
+
+.obligation-card.is-open .obligation-chevron {
+  transform: rotate(180deg);
+}
+
+.obligation-status-badge {
+  display: inline-block;
+  margin: 0 1.1rem 1rem;
+  padding: 0.3rem 0.7rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  background: var(--bg);
+  color: var(--muted);
+}
+
+.obligation-card.is-positive .obligation-status-badge {
+  background: var(--soft-evergreen);
+  color: var(--evergreen);
+}
+
+.obligation-card.is-warning .obligation-status-badge {
+  background: var(--soft-orange);
+  color: var(--orange);
+}
+
+.obligation-detail-wrap {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.3s var(--ease);
+}
+
+.obligation-card.is-open .obligation-detail-wrap {
+  grid-template-rows: 1fr;
+}
+
+.obligation-detail {
+  overflow: hidden;
+  min-height: 0;
+}
+
+.obligation-detail p {
+  font-size: 0.85rem;
+  padding: 0 1.1rem 1.1rem;
+}
+
 .deadline-list {
   display: grid;
   gap: 0.75rem;

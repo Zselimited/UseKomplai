@@ -3,17 +3,17 @@ import { redirect } from "next/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getUserBusiness, getBusinessProfile, getUserProfile, getApprovedRules, getBusinessObligations } from "@/lib/supabase/queries";
 import {
-  STATUS_LABELS,
   businessProfileToEvaluationInput,
   evaluateCompliance,
   toEngineRules,
   type ObligationStatus,
 } from "@/lib/complianceEngine";
 import { getNextDueDate, urgency } from "@/lib/dueDates";
-import { IconBuilding, IconHelpCircle, IconClock } from "@/components/icons";
+import { IconBuilding, IconClock } from "@/components/icons";
 import SignOutButton from "./SignOutButton";
 import AccountDetailsCard from "./AccountDetailsCard";
 import OfficerCard from "./OfficerCard";
+import ObligationsGrid, { type ObligationCardData } from "./ObligationsGrid";
 
 // The five MVP compliance areas Rulla covers. Only areas with a saved
 // business_obligations row (i.e. an approved rule existed at onboarding
@@ -96,6 +96,19 @@ export default async function DashboardPage() {
 
   const obligations = await getBusinessObligations(supabase, business.id);
   const obligationByCode = new Map(obligations.map((o) => [o.ruleCode, o]));
+
+  const obligationCards: ObligationCardData[] = DISPLAY_AREAS.map((area) => {
+    const o = obligationByCode.get(area.code);
+    return {
+      code: area.code,
+      name: area.name,
+      status: (o?.applicabilityStatus as ObligationStatus | undefined) ?? null,
+      reason: o?.reason ?? null,
+      sourceAuthority: o?.sourceAuthority ?? null,
+      sourceUrl: o?.sourceUrl ?? null,
+      requiresReview: o?.requiresReview ?? null,
+    };
+  });
 
   // Only an obligation Rulla is actually confident applies gets a deadline
   // shown — there's no point telling someone when a filing is due for an
@@ -220,72 +233,11 @@ export default async function DashboardPage() {
         </section>
 
         <section className="card">
-          <h2 style={{ fontSize: "1.1rem", marginBottom: "1rem" }}>Compliance Obligations</h2>
-
-          <div>
-            {DISPLAY_AREAS.map((area) => {
-              const o = obligationByCode.get(area.code);
-
-              if (!o || !o.applicabilityStatus) {
-                return (
-                  <div className="result-card" key={area.code}>
-                    <div className="result-card-main">
-                      <span className="icon-tile" style={{ marginBottom: 0 }}>
-                        <IconHelpCircle />
-                      </span>
-                      <div>
-                        <h4>
-                          {area.code} · {area.name}
-                        </h4>
-                        <p>This compliance area isn&apos;t implemented yet.</p>
-                      </div>
-                    </div>
-                    <span className="status-pill status-not_enough_info">Not yet available</span>
-                  </div>
-                );
-              }
-
-              const status = o.applicabilityStatus as ObligationStatus;
-
-              return (
-                <div className="result-card" key={area.code}>
-                  <div className="result-card-main">
-                    <span
-                      className={`icon-tile ${status === "likely_applicable" ? "green" : ""}`}
-                      style={{ marginBottom: 0 }}
-                    >
-                      <IconHelpCircle />
-                    </span>
-                    <div>
-                      <h4>
-                        {area.code} · {area.name}
-                      </h4>
-                      {o.reason && <p>{o.reason}</p>}
-                      {o.sourceAuthority && (
-                        <p className="muted" style={{ fontSize: "0.78rem", marginTop: "0.35rem" }}>
-                          Source: {o.sourceAuthority}
-                          {o.sourceUrl && (
-                            <>
-                              {" — "}
-                              <a href={o.sourceUrl} target="_blank" rel="noopener noreferrer">
-                                View source →
-                              </a>
-                            </>
-                          )}
-                        </p>
-                      )}
-                      {o.requiresReview && (
-                        <p className="muted" style={{ fontSize: "0.78rem", marginTop: "0.15rem" }}>
-                          This result is flagged for review — confirm with a professional if you rely on it.
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                  <span className={`status-pill status-${status}`}>{STATUS_LABELS[status]}</span>
-                </div>
-              );
-            })}
-          </div>
+          <h2 style={{ fontSize: "1.1rem", marginBottom: "0.4rem" }}>Compliance Obligations</h2>
+          <p className="muted" style={{ fontSize: "0.85rem", marginBottom: "1.25rem" }}>
+            Tap a card for the full reasoning and source behind each result.
+          </p>
+          <ObligationsGrid items={obligationCards} />
         </section>
       </div>
     </main>
