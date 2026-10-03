@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
   QUESTIONS,
@@ -9,6 +10,9 @@ import {
   type AssessmentAnswers,
   type QuestionDef,
 } from "@/lib/assessment";
+import { assessmentAnswersToEvaluationInput } from "@/lib/complianceEngine";
+import { supabase } from "@/lib/supabase/client";
+import { getUserBusiness } from "@/lib/supabase/queries";
 import { IconArrowRight, IconCheckCircle } from "@/components/icons";
 
 function isAnswered(question: QuestionDef, answers: AssessmentAnswers) {
@@ -22,11 +26,20 @@ function isAnswered(question: QuestionDef, answers: AssessmentAnswers) {
 const AUTO_ADVANCE_DELAY_MS = 320;
 
 export default function AssessmentFlow() {
+  const router = useRouter();
   const [answers, setAnswers] = useState<AssessmentAnswers>(EMPTY_ANSWERS);
   const [stepIndex, setStepIndex] = useState(0);
-  const [phase, setPhase] = useState<"questions" | "results">("questions");
+  const [phase, setPhase] = useState<"questions" | "saving" | "results">("questions");
   // Blocks double-clicks/duplicate timers while an auto-advance is pending.
   const [transitioning, setTransitioning] = useState(false);
+  // null = not checked yet. A signed-in visitor retaking the assessment
+  // already has an account — the "create an account to see your result"
+  // gate below only makes sense for an anonymous visitor.
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => setIsLoggedIn(!!data.user));
+  }, []);
 
   const visibleQuestions = useMemo(
     () => QUESTIONS.filter((q) => !q.skip || !q.skip(answers)),
@@ -51,18 +64,52 @@ export default function AssessmentFlow() {
     setAnswers((prev) => applyAnswer(prev, id, value));
   }
 
-  function advanceTo(next: AssessmentAnswers) {
+  async function advanceTo(next: AssessmentAnswers) {
     if (!isLast) {
       setStepIndex((i) => i + 1);
       return;
     }
 
-    // Saved here so onboarding can pick it up and run the real evaluation
-    // once there's an authenticated business to save it against — this
-    // screen itself never shows a status, so it never needs to reach
-    // Supabase at all.
     saveAssessmentAnswers(next);
-    setPhase("results");
+
+    if (!isLoggedIn) {
+      // Anonymous visitor — no business to save against yet. Results stay
+      // gated behind signup/login, same as before.
+      setPhase("results");
+      return;
+    }
+
+    // Already signed in and retaking the assessment: there's no account to
+    // create, so update their existing business profile directly instead
+    // of showing the "create an account" gate. The dashboard re-runs the
+    // compliance engine against whatever is saved here on every load, so
+    // writing the profile is enough — no need to duplicate that logic.
+    setPhase("saving");
+    const business = await getUserBusiness(supabase);
+
+    if (!business) {
+      // Signed in but never finished onboarding — that flow already
+      // prefills from the saved assessment answers.
+      router.push("/onboarding");
+      return;
+    }
+
+    const input = assessmentAnswersToEvaluationInput(next);
+    await supabase
+      .from("business_profiles")
+      .update({
+        is_registered: input.is_registered,
+        has_employees: input.has_employees,
+        uses_contractors: input.uses_contractors,
+        sells_taxable_goods_or_services: input.sells_taxable_goods_or_services,
+        is_vat_registered: input.is_vat_registered,
+        has_tin: input.has_tin,
+        diagnostic_completed_at: new Date().toISOString(),
+      })
+      .eq("business_id", business.id);
+
+    router.push("/dashboard");
+    router.refresh();
   }
 
   // Cards/select answers are unambiguous the moment they're picked, so the
@@ -177,6 +224,21 @@ export default function AssessmentFlow() {
         )}
       </div>
     </div>
+
+    {phase === "saving" && (
+      <div className="modal-overlay">
+        <div className="modal-card">
+          <div className="modal-badge">
+            <IconCheckCircle />
+          </div>
+          <span className="eyebrow" style={{ justifyContent: "center" }}>
+            Assessment complete
+          </span>
+          <h2 style={{ fontSize: "1.4rem", marginTop: "0.3rem" }}>Updating your results…</h2>
+          <p className="muted">Taking you to your dashboard.</p>
+        </div>
+      </div>
+    )}
 
     {phase === "results" && (
       <div className="modal-overlay">
