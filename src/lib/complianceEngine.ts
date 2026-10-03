@@ -1,5 +1,5 @@
 /**
- * The Komplai compliance rule engine.
+ * The Rulla compliance rule engine.
  *
  * This file is deliberately generic. It contains no area-specific logic —
  * no "if VAT", no "if PAYE". It only knows how to read the `conditions`

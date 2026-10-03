@@ -12,11 +12,7 @@ import {
   IconUsers,
   IconFileText,
   IconShield,
-  IconSparkline,
   IconChevronDown,
-  IconX2,
-  IconEye,
-  IconMessageQuestion,
 } from "@/components/icons";
 
 const VIZ_ITEMS = [
@@ -33,28 +29,10 @@ const VALUE_STRIP = [
   { icon: IconAlertCircle, title: "Act", body: "Organise what needs attention and manage it from one place." },
 ];
 
-const PROBLEMS = [
-  {
-    n: "01",
-    title: "You don't know what applies to your business.",
-    body: "Different businesses have different structures, activities, employees and obligations. Finding the relevant requirements shouldn't require searching through endless documents.",
-  },
-  {
-    n: "02",
-    title: "Information is scattered everywhere.",
-    body: "Rules, guidance, documents and obligations can live across different sources. Komplai brings the information into one organised experience.",
-  },
-  {
-    n: "03",
-    title: "It's easy to lose track.",
-    body: "Even when you know what needs to be done, keeping up with obligations and what needs attention can become difficult as your business grows.",
-  },
-];
-
 const HOW_IT_WORKS = [
   { title: "Tell us about your business", body: "Business type, location, industry, employees and other relevant information." },
   { title: "Answer a few questions", body: "A simple, personalised compliance assessment." },
-  { title: "See what may apply", body: "Komplai produces a preliminary view of relevant compliance areas." },
+  { title: "See what may apply", body: "Rulla produces a preliminary view of relevant compliance areas." },
   { title: "Manage it in one place", body: "Save your assessment and eventually manage obligations from your dashboard." },
 ];
 
@@ -66,51 +44,13 @@ const COMPLIANCE_AREAS = [
   { n: "05", code: "CIT", name: "CIT", icon: IconShield, description: "Understand company income tax considerations." },
 ];
 
-const WHY_KOMPLAI = [
-  { icon: IconCompass, title: "Built around your business", body: "Compliance information is presented based on your business profile." },
-  { icon: IconFileText, title: "Clearer information", body: "Turn complicated compliance information into something easier to understand." },
-  { icon: IconLayers, title: "One organised place", body: "Keep your compliance information and obligations together." },
-  { icon: IconSparkline, title: "Built to grow with you", body: "Start with understanding and assessment, then grow into ongoing compliance management." },
-];
-
-const OLD_WAY = [
-  "Search different websites",
-  "Read long documents",
-  "Try to figure out what applies",
-  "Track things manually",
-  "Ask different people",
-  "Hope nothing gets missed",
-];
-
-const KOMPLAI_WAY = [
-  "Tell us about your business",
-  "Get a personalised starting point",
-  "Understand what may apply",
-  "Organise your obligations",
-  "See what needs attention",
-  "Manage everything in one place",
-];
-
-const FUTURE = [
-  { icon: IconEye, title: "Understand", body: "Make complex compliance information easier to understand." },
-  { icon: IconSparkline, title: "Monitor", body: "Keep track of obligations and what needs attention." },
-  { icon: IconMessageQuestion, title: "Ask", body: "Eventually interact with your compliance information through intelligent assistance." },
-];
-
-const WHO_FOR = [
-  { icon: IconCompass, title: "Founders", body: "Understand the compliance requirements that may affect your business." },
-  { icon: IconSparkline, title: "Growing Businesses", body: "Keep compliance organised as your business becomes more complex." },
-  { icon: IconLayers, title: "Finance & Operations Teams", body: "Get a clearer view of business compliance information." },
-  { icon: IconUsers, title: "Professional Advisors", body: "Use organised compliance information to support clients." },
-];
-
 const FAQ = [
   {
-    q: "What is Komplai?",
-    a: "Komplai is a platform that helps Nigerian businesses understand, assess and organise the compliance areas that may apply to them, in one place.",
+    q: "What is Rulla?",
+    a: "Rulla is a platform that helps Nigerian businesses understand, assess and organise the compliance areas that may apply to them, in one place.",
   },
   {
-    q: "Who is Komplai for?",
+    q: "Who is Rulla for?",
     a: "Founders, growing businesses, finance and operations teams, and professional advisors who want a clearer view of business compliance.",
   },
   {
@@ -119,22 +59,22 @@ const FAQ = [
   },
   {
     q: "How does the compliance assessment work?",
-    a: "You answer a short series of questions about your business — type, registration status, employees and a few others — and Komplai gives you a preliminary view of which compliance areas may be relevant.",
+    a: "You answer a short series of questions about your business — type, registration status, employees and a few others — and Rulla gives you a preliminary view of which compliance areas may be relevant.",
   },
   {
-    q: "Does Komplai provide legal or tax advice?",
-    a: "No. Komplai provides informational compliance guidance, not professional legal or tax advice. Actual requirements depend on your specific business and current law.",
+    q: "Does Rulla provide legal or tax advice?",
+    a: "No. Rulla provides informational compliance guidance, not professional legal or tax advice. Actual requirements depend on your specific business and current law.",
   },
   {
-    q: "Which compliance areas does Komplai cover?",
-    a: "Today, Komplai covers CAC annual returns, VAT, PAYE, withholding tax and company income tax, with more areas planned.",
+    q: "Which compliance areas does Rulla cover?",
+    a: "Today, Rulla covers CAC annual returns, VAT, PAYE, withholding tax and company income tax, with more areas planned.",
   },
   {
     q: "Can I save my assessment?",
     a: "Yes. Once you complete the assessment, you can create a free account to save your results and continue from your dashboard.",
   },
   {
-    q: "How does Komplai determine what may apply to my business?",
+    q: "How does Rulla determine what may apply to my business?",
     a: "Your answers are compared against general compliance criteria to produce a preliminary view. It's a starting point, not a final determination — always confirm specifics for your situation.",
   },
 ];
@@ -149,7 +89,7 @@ export default function HomePage() {
             <span className="eyebrow">Business compliance, made simpler.</span>
             <h1>Your business compliance. Finally in one place.</h1>
             <p>
-              Komplai helps Nigerian businesses understand, assess and
+              Rulla helps Nigerian businesses understand, assess and
               organise their compliance obligations — without the
               confusion.
             </p>
@@ -159,7 +99,7 @@ export default function HomePage() {
                 <IconArrowRight className="btn-arrow" />
               </Link>
               <Link href="/explore" className="btn btn-outline btn-lg">
-                Explore Komplai
+                Explore Rulla
               </Link>
             </div>
             <div className="hero-microcopy">
@@ -235,31 +175,11 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ============ 3. The problem ============ */}
-      <section className="section">
-        <div className="container">
-          <Reveal className="statement">
-            <span className="section-index">01 — The problem</span>
-            <h2>Running a business is complicated enough. Compliance shouldn&apos;t be.</h2>
-          </Reveal>
-
-          <div className="problem-grid">
-            {PROBLEMS.map((p, i) => (
-              <Reveal key={p.n} className={`problem-card reveal-delay-${i + 1}`}>
-                <div className="card-number">{p.n}</div>
-                <h3>{p.title}</h3>
-                <p>{p.body}</p>
-              </Reveal>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ============ 4. How it works ============ */}
+      {/* ============ 3. How it works ============ */}
       <section className="section" id="how-it-works">
         <div className="container">
           <div className="section-head">
-            <span className="section-index">02 — How Komplai works</span>
+            <span className="eyebrow">How it works</span>
             <h2>From questions to clarity.</h2>
           </div>
 
@@ -278,12 +198,12 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ============ 5. Personalized assessment ============ */}
+      {/* ============ 4. Personalized assessment ============ */}
       <section className="section" style={{ background: "var(--white)", borderTop: "1px solid var(--border)", borderBottom: "1px solid var(--border)" }}>
         <div className="container">
           <div className="split-grid">
             <div className="split-copy">
-              <span className="section-index">03 — The assessment</span>
+              <span className="eyebrow">The assessment</span>
               <h2>What does compliance look like for YOUR business?</h2>
               <p style={{ marginTop: "0.85rem", marginBottom: "1.75rem", fontSize: "1.05rem" }}>
                 Answer a few simple questions and get a personalised view
@@ -326,7 +246,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ============ 6. Compliance areas ============ */}
+      {/* ============ 5. Compliance areas ============ */}
       <section className="section" id="compliance-areas">
         <div className="container">
           <div className="section-head">
@@ -353,7 +273,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ============ 7. Product experience ============ */}
+      {/* ============ 6. Product experience ============ */}
       <section className="section" id="product">
         <div className="container">
           <div className="section-head">
@@ -457,109 +377,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ============ 8. Why Komplai ============ */}
-      <section className="section">
-        <div className="container">
-          <div className="section-head">
-            <h2>Built around your business, not a generic checklist.</h2>
-          </div>
-          <div className="why-grid">
-            {WHY_KOMPLAI.map((item, i) => (
-              <Reveal key={item.title} className={`card reveal-delay-${(i % 4) + 1}`}>
-                <span className="icon-tile green">
-                  <item.icon />
-                </span>
-                <h3 style={{ fontSize: "1rem" }}>{item.title}</h3>
-                <p style={{ fontSize: "0.88rem" }}>{item.body}</p>
-              </Reveal>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ============ 9. The difference ============ */}
-      <section className="section">
-        <div className="container">
-          <Reveal className="statement">
-            <span className="section-index">04 — The difference</span>
-            <h2>Compliance shouldn&apos;t feel like detective work.</h2>
-          </Reveal>
-
-          <div className="compare-grid">
-            <Reveal className="compare-col negative">
-              <h3>The old way</h3>
-              {OLD_WAY.map((item) => (
-                <div className="compare-row" key={item}>
-                  <IconX2 />
-                  {item}
-                </div>
-              ))}
-            </Reveal>
-            <Reveal className="compare-col positive reveal-delay-2">
-              <h3>With Komplai</h3>
-              {KOMPLAI_WAY.map((item) => (
-                <div className="compare-row" key={item}>
-                  <IconCheckCircle />
-                  {item}
-                </div>
-              ))}
-            </Reveal>
-          </div>
-        </div>
-      </section>
-
-      {/* ============ 10. Future intelligence ============ */}
-      <section className="section">
-        <div className="container">
-          <div className="section-head">
-            <span className="eyebrow">What we&apos;re building next</span>
-            <h2>A smarter way to manage business compliance.</h2>
-            <p>
-              Komplai is being built to bring compliance rules, official
-              information, business data and intelligent assistance
-              together in one place.
-            </p>
-          </div>
-
-          <div className="future-grid">
-            {FUTURE.map((item, i) => (
-              <Reveal key={item.title} className={`card reveal-delay-${i + 1}`} >
-                <span className="icon-tile">
-                  <item.icon />
-                </span>
-                <h3 style={{ fontSize: "1rem" }}>{item.title}</h3>
-                <p style={{ fontSize: "0.88rem" }}>{item.body}</p>
-                <span className="building-tag">
-                  <IconClock />
-                  In development
-                </span>
-              </Reveal>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ============ 11. Who it's for ============ */}
-      <section className="section">
-        <div className="container">
-          <div className="section-head">
-            <h2>Built for the people who deal with compliance.</h2>
-          </div>
-          <div className="who-grid">
-            {WHO_FOR.map((item, i) => (
-              <Reveal key={item.title} className={`card reveal-delay-${(i % 4) + 1}`}>
-                <span className="icon-tile">
-                  <item.icon />
-                </span>
-                <h3 style={{ fontSize: "0.98rem" }}>{item.title}</h3>
-                <p style={{ fontSize: "0.86rem" }}>{item.body}</p>
-              </Reveal>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ============ 12. FAQ ============ */}
+      {/* ============ 7. FAQ ============ */}
       <section className="section">
         <div className="container">
           <div className="section-head">
@@ -579,7 +397,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ============ 13. Final CTA ============ */}
+      {/* ============ 8. Final CTA ============ */}
       <section className="section">
         <div className="container">
           <Reveal>

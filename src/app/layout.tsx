@@ -15,9 +15,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Komplai — Business Compliance Made Simpler",
+  title: "Rulla — Business Compliance Made Simpler",
   description:
-    "Understand, assess and organise business compliance with Komplai.",
+    "Understand, assess and organise business compliance with Rulla.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import SignupForm from "./SignupForm";
 
 export const metadata: Metadata = {
-  title: "Sign up — Komplai",
+  title: "Sign up — Rulla",
 };
 
 export default async function SignupPage({

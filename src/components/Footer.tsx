@@ -7,8 +7,8 @@ export default function Footer() {
         <div className="footer-grid">
           <div className="footer-brand">
             <Link href="/" className="brand">
-              <span className="brand-mark">K</span>
-              Komplai
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/logo-rulla.svg" alt="Rulla" className="brand-logo" />
             </Link>
             <p>Business compliance, made simpler.</p>
           </div>
@@ -63,7 +63,7 @@ export default function Footer() {
         </div>
 
         <div className="footer-disclaimer" id="disclaimer">
-          Komplai provides informational compliance guidance. Applicability
+          Rulla provides informational compliance guidance. Applicability
           and requirements may depend on your business, current laws,
           regulations and official guidance.
         </div>

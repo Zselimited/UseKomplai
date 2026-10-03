@@ -30,8 +30,8 @@ export default function Header() {
     <header className={`site-header ${scrolled ? "is-scrolled" : ""}`}>
       <div className="container site-header-inner">
         <Link href="/" className="brand">
-          <span className="brand-mark">K</span>
-          Komplai
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/logo-rulla.svg" alt="Rulla" className="brand-logo" />
         </Link>
 
         <div className="header-desktop-only">

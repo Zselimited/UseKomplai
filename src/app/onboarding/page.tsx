@@ -5,7 +5,7 @@ import { getUserBusiness } from "@/lib/supabase/queries";
 import OnboardingForm from "./OnboardingForm";
 
 export const metadata: Metadata = {
-  title: "Business Profile — Komplai",
+  title: "Business Profile — Rulla",
 };
 
 export default async function OnboardingPage() {
@@ -31,7 +31,7 @@ export default async function OnboardingPage() {
       <span className="eyebrow">Business profile</span>
       <h1>Tell us about your business</h1>
       <p className="muted">
-        This helps Komplai work out which compliance obligations apply to
+        This helps Rulla work out which compliance obligations apply to
         you. You can update these details later.
       </p>
       <OnboardingForm />

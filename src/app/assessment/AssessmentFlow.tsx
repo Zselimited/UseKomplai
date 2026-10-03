@@ -210,7 +210,7 @@ export default function AssessmentFlow() {
         </div>
 
         <div className="card" style={{ textAlign: "center", marginTop: "2rem" }}>
-          <h3>Save your assessment and continue with Komplai.</h3>
+          <h3>Save your assessment and continue with Rulla.</h3>
           <p style={{ marginBottom: "1.25rem" }}>
             Create a free account to save this assessment, complete your
             business profile, and track it from your dashboard.

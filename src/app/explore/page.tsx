@@ -10,16 +10,16 @@ import {
 } from "@/components/icons";
 
 export const metadata: Metadata = {
-  title: "Explore Compliance Areas — Komplai",
+  title: "Explore Compliance Areas — Rulla",
   description:
-    "A general overview of the CAC, VAT, PAYE, withholding tax and company income tax areas Komplai covers for Nigerian businesses.",
+    "A general overview of the CAC, VAT, PAYE, withholding tax and company income tax areas Rulla covers for Nigerian businesses.",
 };
 
 // Static, general-knowledge descriptions only — no specific rates,
 // thresholds, or deadlines are stated here. Real, reviewed rule content
 // lives in the compliance_rules / rule_versions tables and is what
-// Komplai will eventually show once a business's obligations are
-// generated — this page is just an overview of the categories Komplai
+// Rulla will eventually show once a business's obligations are
+// generated — this page is just an overview of the categories Rulla
 // covers, for visitors who haven't signed up yet.
 const CATEGORIES = [
   {
@@ -66,7 +66,7 @@ export default function ExplorePage() {
         <span className="eyebrow">Compliance areas</span>
         <h1>Compliance categories</h1>
         <p style={{ marginTop: "0.75rem", fontSize: "1.05rem" }}>
-          A general overview of the areas Komplai covers. To see exactly
+          A general overview of the areas Rulla covers. To see exactly
           which of these apply to your business, take the free assessment.
         </p>
         <div className="cta-row">
@@ -92,7 +92,7 @@ export default function ExplorePage() {
 
       <p className="muted" style={{ marginTop: "2rem", fontSize: "0.85rem" }}>
         This page is a general overview, not personalized advice — actual
-        applicability depends on your specific business. Komplai does not
+        applicability depends on your specific business. Rulla does not
         yet cover pension, NSITF, ITF, NHF, or industry-specific licences.
       </p>
     </main>

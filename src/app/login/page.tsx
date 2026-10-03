@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import LoginForm from "./LoginForm";
 
 export const metadata: Metadata = {
-  title: "Log in — Komplai",
+  title: "Log in — Rulla",
 };
 
 export default async function LoginPage({

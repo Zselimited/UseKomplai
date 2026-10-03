@@ -1,5 +1,5 @@
 /* ==========================================================================
-   Komplai design system
+   Rulla design system
    Light, premium, evergreen-as-accent SaaS look. No dark-mode auto-switching
    — product deliberately stays light regardless of OS preference.
    ========================================================================== */
@@ -416,6 +416,12 @@ main {
   justify-content: center;
   font-weight: 800;
   font-size: 0.95rem;
+}
+
+.brand-logo {
+  height: 22px;
+  width: auto;
+  display: block;
 }
 
 .main-nav {
@@ -1168,7 +1174,7 @@ main {
 }
 
 /* ==========================================================================
-   Why Komplai
+   Why Rulla
    ========================================================================== */
 
 .why-grid {

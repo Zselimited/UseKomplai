@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Privacy — Komplai",
+  title: "Privacy — Rulla",
 };
 
 export default function PrivacyPage() {
@@ -9,7 +9,7 @@ export default function PrivacyPage() {
     <main className="page">
       <h1>Privacy Policy</h1>
       <p className="muted" style={{ marginTop: "1rem" }}>
-        Komplai&apos;s full privacy policy is being finalized ahead of our
+        Rulla&apos;s full privacy policy is being finalized ahead of our
         pilot. In the meantime, we only collect the information needed to
         run your account and generate your compliance assessment, and we
         do not sell your data. If you have questions about your data,

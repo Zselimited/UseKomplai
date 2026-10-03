@@ -6,7 +6,7 @@ import { STATUS_LABELS, type ObligationStatus } from "@/lib/complianceEngine";
 import { IconBuilding, IconHelpCircle } from "@/components/icons";
 import SignOutButton from "./SignOutButton";
 
-// The five MVP compliance areas Komplai covers. Only areas with a saved
+// The five MVP compliance areas Rulla covers. Only areas with a saved
 // business_obligations row (i.e. an approved rule existed at onboarding
 // time) show a real result — anything else renders as not-yet-available
 // rather than a guessed or fabricated status. This always renders all
@@ -21,7 +21,7 @@ const DISPLAY_AREAS = [
 ];
 
 export const metadata: Metadata = {
-  title: "Dashboard — Komplai",
+  title: "Dashboard — Rulla",
 };
 
 function StatusPill({ value }: { value: boolean | null | undefined }) {

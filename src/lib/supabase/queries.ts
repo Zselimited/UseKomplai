@@ -34,7 +34,7 @@ export type BusinessProfile = {
 /**
  * Returns the first business the current user is a member of (via RLS —
  * this can only ever return businesses they legitimately belong to), or
- * null if they have none yet. Komplai only supports one business per user
+ * null if they have none yet. Rulla only supports one business per user
  * for now, so "first" is effectively "their" business.
  */
 export async function getUserBusiness(
