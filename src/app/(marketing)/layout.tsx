@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import "./globals.css";
+import "../globals.css";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -20,7 +20,7 @@ export const metadata: Metadata = {
     "Understand, assess and organise business compliance with Rulla.",
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default function MarketingLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
       <body>

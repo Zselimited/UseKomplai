@@ -1412,6 +1412,158 @@ form {
   padding: 2.25rem;
 }
 
+/* ==========================================================================
+   Split-screen auth (signup / login)
+   ========================================================================== */
+
+.auth-split {
+  min-height: 100vh;
+  display: flex;
+}
+
+.auth-split-visual {
+  flex: 1 1 44%;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 3.5rem 3.5rem 3rem;
+  background: linear-gradient(165deg, var(--soft-evergreen) 0%, var(--bg) 75%);
+  overflow: hidden;
+}
+
+.auth-split-visual::before,
+.auth-split-visual::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.auth-split-visual::before {
+  width: 440px;
+  height: 440px;
+  background: radial-gradient(circle, rgba(11, 107, 79, 0.16), transparent 70%);
+  top: -140px;
+  right: -140px;
+}
+
+.auth-split-visual::after {
+  width: 340px;
+  height: 340px;
+  background: radial-gradient(circle, rgba(204, 78, 0, 0.14), transparent 70%);
+  bottom: -110px;
+  left: -90px;
+}
+
+.auth-split-brand {
+  display: inline-flex;
+  align-items: center;
+  position: relative;
+  z-index: 1;
+  margin-bottom: auto;
+}
+
+.auth-split-copy {
+  position: relative;
+  z-index: 1;
+  margin-top: auto;
+}
+
+.auth-split-copy h1 {
+  font-size: 2.2rem;
+  line-height: 1.18;
+  max-width: 420px;
+}
+
+.auth-split-copy h1 .accent {
+  color: var(--evergreen);
+}
+
+.auth-split-copy p {
+  margin-top: 1rem;
+  max-width: 380px;
+  color: var(--muted);
+  font-size: 1.02rem;
+}
+
+.auth-split-form {
+  flex: 1 1 56%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2.5rem 1.5rem;
+  background: var(--white);
+}
+
+.auth-split-card {
+  width: 100%;
+  max-width: 400px;
+}
+
+.auth-split-card h2 {
+  font-size: 1.6rem;
+  text-align: center;
+}
+
+.auth-split-card > p.muted {
+  text-align: center;
+  margin-top: 0.4rem;
+  margin-bottom: 0.5rem;
+}
+
+@media (max-width: 920px) {
+  .auth-split-visual {
+    display: none;
+  }
+
+  .auth-split-form {
+    padding: 3rem 1.5rem;
+  }
+}
+
+.field-input-group {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.field-input-group > svg {
+  position: absolute;
+  left: 0.85rem;
+  width: 18px;
+  height: 18px;
+  color: var(--muted);
+  pointer-events: none;
+}
+
+.field-input-group input {
+  width: 100%;
+  padding-left: 2.6rem;
+}
+
+.field-input-group.has-toggle input {
+  padding-right: 2.6rem;
+}
+
+.field-toggle {
+  position: absolute;
+  right: 0.6rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  padding: 0.3rem;
+  cursor: pointer;
+  color: var(--muted);
+}
+
+.field-toggle svg {
+  width: 18px;
+  height: 18px;
+}
+
 .modal-overlay {
   position: fixed;
   inset: 0;
@@ -1425,16 +1577,46 @@ form {
 
 .modal-card {
   width: 100%;
-  max-width: 380px;
+  max-width: 400px;
   background: var(--white);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-lg);
-  padding: 2rem;
+  padding: 2.5rem 2rem 2rem;
   text-align: center;
+  animation: modalIn 0.3s var(--ease);
+}
+
+@keyframes modalIn {
+  from { opacity: 0; transform: translateY(8px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .modal-card {
+    animation: none;
+  }
 }
 
 .modal-card p {
   margin-bottom: 1.5rem;
+}
+
+.modal-badge {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--evergreen), var(--evergreen-dark));
+  color: var(--white);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1rem;
+  box-shadow: 0 10px 24px rgba(11, 107, 79, 0.3);
+}
+
+.modal-badge svg {
+  width: 30px;
+  height: 30px;
 }
 
 /* ==========================================================================
@@ -1500,6 +1682,11 @@ form {
 
 .option-grid.single-col {
   grid-template-columns: 1fr;
+}
+
+.option-grid.is-transitioning {
+  opacity: 0.6;
+  pointer-events: none;
 }
 
 .option-card {

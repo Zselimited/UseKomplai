@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { supabase } from "@/lib/supabase/client";
 import { IconMenu, IconX } from "./icons";
 
 const NAV_LINKS = [
@@ -14,6 +15,9 @@ const NAV_LINKS = [
 export default function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  // null = not checked yet, so we briefly render nothing rather than
+  // flashing "Log in" for an already-signed-in visitor.
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null);
 
   useEffect(() => {
     function onScroll() {
@@ -24,7 +28,23 @@ export default function Header() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => setIsLoggedIn(!!data.user));
+
+    // The header is part of the root layout and persists across client-side
+    // navigations, so a one-time check on mount would go stale the moment
+    // someone logs in or out without a full page reload — subscribe instead.
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setIsLoggedIn(!!session?.user);
+    });
+    return () => subscription.unsubscribe();
+  }, []);
+
   const closeMenu = () => setMenuOpen(false);
+  const accountHref = isLoggedIn ? "/dashboard" : "/login";
+  const accountLabel = isLoggedIn ? "Dashboard" : "Log in";
 
   return (
     <header className={`site-header ${scrolled ? "is-scrolled" : ""}`}>
@@ -44,9 +64,11 @@ export default function Header() {
           </nav>
 
           <div className="header-actions">
-            <Link href="/login" className="nav-login-link">
-              Log in
-            </Link>
+            {isLoggedIn !== null && (
+              <Link href={accountHref} className="nav-login-link">
+                {accountLabel}
+              </Link>
+            )}
             <Link href="/assessment" className="btn btn-primary">
               Check My Compliance
             </Link>
@@ -70,9 +92,11 @@ export default function Header() {
             {link.label}
           </Link>
         ))}
-        <Link href="/login" onClick={closeMenu}>
-          Log in
-        </Link>
+        {isLoggedIn !== null && (
+          <Link href={accountHref} onClick={closeMenu}>
+            {accountLabel}
+          </Link>
+        )}
         <Link
           href="/assessment"
           className="btn btn-primary"

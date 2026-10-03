@@ -16,10 +16,17 @@ function isAnswered(question: QuestionDef, answers: AssessmentAnswers) {
   return typeof value === "string" && value.trim() !== "";
 }
 
+// How long the selected-option highlight is visible before the quiz moves
+// on by itself — long enough to register as feedback, short enough not to
+// feel laggy.
+const AUTO_ADVANCE_DELAY_MS = 320;
+
 export default function AssessmentFlow() {
   const [answers, setAnswers] = useState<AssessmentAnswers>(EMPTY_ANSWERS);
   const [stepIndex, setStepIndex] = useState(0);
   const [phase, setPhase] = useState<"questions" | "results">("questions");
+  // Blocks double-clicks/duplicate timers while an auto-advance is pending.
+  const [transitioning, setTransitioning] = useState(false);
 
   const visibleQuestions = useMemo(
     () => QUESTIONS.filter((q) => !q.skip || !q.skip(answers)),
@@ -30,24 +37,21 @@ export default function AssessmentFlow() {
   const isLast = stepIndex === visibleQuestions.length - 1;
   const progressPct = Math.round(((stepIndex + 1) / visibleQuestions.length) * 100);
 
+  function applyAnswer(prev: AssessmentAnswers, id: keyof AssessmentAnswers, value: string) {
+    const next = { ...prev, [id]: value };
+    // Keep data honest: if they now say "no employees", don't keep a
+    // stale employee-range answer around.
+    if (id === "hasEmployees" && value === "no") {
+      next.employeeRange = "";
+    }
+    return next;
+  }
+
   function updateAnswer(id: keyof AssessmentAnswers, value: string) {
-    setAnswers((prev) => {
-      const next = { ...prev, [id]: value };
-      // Keep data honest: if they now say "no employees", don't keep a
-      // stale employee-range answer around.
-      if (id === "hasEmployees" && value === "no") {
-        next.employeeRange = "";
-      }
-      return next;
-    });
+    setAnswers((prev) => applyAnswer(prev, id, value));
   }
 
-  function goBack() {
-    if (stepIndex === 0) return;
-    setStepIndex((i) => i - 1);
-  }
-
-  function goNext() {
+  function advanceTo(next: AssessmentAnswers) {
     if (!isLast) {
       setStepIndex((i) => i + 1);
       return;
@@ -57,8 +61,34 @@ export default function AssessmentFlow() {
     // once there's an authenticated business to save it against — this
     // screen itself never shows a status, so it never needs to reach
     // Supabase at all.
-    saveAssessmentAnswers(answers);
+    saveAssessmentAnswers(next);
     setPhase("results");
+  }
+
+  // Cards/select answers are unambiguous the moment they're picked, so the
+  // quiz advances on its own instead of waiting for a separate "Continue"
+  // click — computing `next` directly (rather than reading the `answers`
+  // state var) means the save on the final question always has the answer
+  // that was just picked, even though this runs after a delay.
+  function selectAndAdvance(id: keyof AssessmentAnswers, value: string) {
+    if (transitioning) return;
+    const next = applyAnswer(answers, id, value);
+    setAnswers(next);
+    setTransitioning(true);
+    window.setTimeout(() => {
+      setTransitioning(false);
+      advanceTo(next);
+    }, AUTO_ADVANCE_DELAY_MS);
+  }
+
+  function goBack() {
+    if (stepIndex === 0) return;
+    setStepIndex((i) => i - 1);
+  }
+
+  // Used by the text question's explicit Continue button only.
+  function goNext() {
+    advanceTo(answers);
   }
 
   return (
@@ -78,7 +108,7 @@ export default function AssessmentFlow() {
         <h2>{currentQuestion.question}</h2>
 
         {currentQuestion.type === "cards" && (
-          <div className="option-grid">
+          <div className={`option-grid ${transitioning ? "is-transitioning" : ""}`}>
             {currentQuestion.options.map((option) => (
               <button
                 key={option.value}
@@ -86,7 +116,8 @@ export default function AssessmentFlow() {
                 role="radio"
                 aria-checked={answers[currentQuestion.id] === option.value}
                 className={`option-card ${answers[currentQuestion.id] === option.value ? "is-selected" : ""}`}
-                onClick={() => updateAnswer(currentQuestion.id, option.value)}
+                onClick={() => selectAndAdvance(currentQuestion.id, option.value)}
+                disabled={transitioning}
               >
                 {option.label}
                 <span className="check">
@@ -102,7 +133,8 @@ export default function AssessmentFlow() {
             <select
               aria-label={currentQuestion.question}
               value={answers[currentQuestion.id]}
-              onChange={(e) => updateAnswer(currentQuestion.id, e.target.value)}
+              disabled={transitioning}
+              onChange={(e) => selectAndAdvance(currentQuestion.id, e.target.value)}
             >
               <option value="" disabled>
                 Select an option
@@ -132,26 +164,38 @@ export default function AssessmentFlow() {
         <button type="button" className="btn btn-outline" onClick={goBack} disabled={stepIndex === 0}>
           Back
         </button>
-        <button
-          type="button"
-          className="btn btn-primary btn-lg"
-          onClick={goNext}
-          disabled={!isAnswered(currentQuestion, answers)}
-        >
-          {isLast ? "See my assessment" : "Continue"}
-          <IconArrowRight className="btn-arrow" />
-        </button>
+        {currentQuestion.type === "text" && (
+          <button
+            type="button"
+            className="btn btn-primary btn-lg"
+            onClick={goNext}
+            disabled={!isAnswered(currentQuestion, answers)}
+          >
+            {isLast ? "See my assessment" : "Continue"}
+            <IconArrowRight className="btn-arrow" />
+          </button>
+        )}
       </div>
     </div>
 
     {phase === "results" && (
       <div className="modal-overlay">
         <div className="modal-card">
-          <h2 style={{ fontSize: "1.3rem" }}>Congratulations!</h2>
-          <p className="muted">Log in to see your results.</p>
+          <div className="modal-badge">
+            <IconCheckCircle />
+          </div>
+          <span className="eyebrow" style={{ justifyContent: "center" }}>
+            Assessment complete
+          </span>
+          <h2 style={{ fontSize: "1.4rem", marginTop: "0.3rem" }}>Congratulations!</h2>
+          <p className="muted">
+            Your preliminary compliance results are ready. Create a free
+            account or log in to see them.
+          </p>
           <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
             <Link href="/signup?next=/onboarding" className="btn btn-primary btn-lg">
               Create Free Account
+              <IconArrowRight className="btn-arrow" />
             </Link>
             <Link href="/login?next=/onboarding" className="btn btn-outline btn-lg">
               Log in

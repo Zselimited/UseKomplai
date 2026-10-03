@@ -203,6 +203,25 @@ export function IconEye({ className }: IconProps) {
   );
 }
 
+export function IconEyeOff({ className }: IconProps) {
+  return (
+    <svg {...base} className={className} aria-hidden="true">
+      <path d="M3 3l18 18" />
+      <path d="M10.6 5.7A9.9 9.9 0 0 1 12 5.5c6 0 9.5 6.5 9.5 6.5a16.6 16.6 0 0 1-3.3 4.1M6.5 7.2C4 9 2.5 12 2.5 12s3.5 6.5 9.5 6.5a9.8 9.8 0 0 0 4-.85" />
+      <path d="M9.5 10.2a2.6 2.6 0 0 0 3.6 3.6" />
+    </svg>
+  );
+}
+
+export function IconMail({ className }: IconProps) {
+  return (
+    <svg {...base} className={className} aria-hidden="true">
+      <rect x="3" y="5" width="18" height="14" rx="2" />
+      <path d="M4 7l8 6 8-6" />
+    </svg>
+  );
+}
+
 export function IconMessageQuestion({ className }: IconProps) {
   return (
     <svg {...base} className={className} aria-hidden="true">
