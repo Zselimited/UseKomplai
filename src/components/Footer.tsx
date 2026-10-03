@@ -29,18 +29,6 @@ export default function Footer() {
           </div>
 
           <div>
-            <h4>Account</h4>
-            <ul>
-              <li>
-                <Link href="/login">Log in</Link>
-              </li>
-              <li>
-                <Link href="/signup">Sign up</Link>
-              </li>
-            </ul>
-          </div>
-
-          <div>
             <h4>Legal</h4>
             <ul>
               <li>

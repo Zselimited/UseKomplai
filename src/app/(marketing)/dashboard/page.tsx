@@ -9,9 +9,10 @@ import {
   toEngineRules,
   type ObligationStatus,
 } from "@/lib/complianceEngine";
-import { IconBuilding, IconHelpCircle, IconMessageQuestion } from "@/components/icons";
+import { IconBuilding, IconHelpCircle } from "@/components/icons";
 import SignOutButton from "./SignOutButton";
 import AccountDetailsCard from "./AccountDetailsCard";
+import OfficerCard from "./OfficerCard";
 
 // The five MVP compliance areas Rulla covers. Only areas with a saved
 // business_obligations row (i.e. an approved rule existed at onboarding
@@ -96,152 +97,135 @@ export default async function DashboardPage() {
   const obligationByCode = new Map(obligations.map((o) => [o.ruleCode, o]));
 
   return (
-    <main className="page-wide">
-      <AccountDetailsCard profile={userProfile} fallbackEmail={user.email ?? ""} />
+    <main className="page-wide dashboard-shell">
+      <aside className="dashboard-rail">
+        <AccountDetailsCard profile={userProfile} fallbackEmail={user.email ?? ""} />
 
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          gap: "1rem",
-          marginBottom: "2rem",
-          flexWrap: "wrap",
-        }}
-      >
-        <div style={{ display: "flex", alignItems: "center", gap: "0.85rem" }}>
-          <span className="icon-tile" style={{ marginBottom: 0 }}>
-            <IconBuilding />
-          </span>
-          <div>
-            <h2 style={{ fontSize: "1.2rem" }}>{business.legal_name}</h2>
-            <p className="muted" style={{ fontSize: "0.85rem" }}>
-              {business.business_type
-                ? BUSINESS_TYPE_LABELS[business.business_type] ?? business.business_type
-                : "Business details"}
-            </p>
+        <section className="card" style={{ marginBottom: "1.25rem" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "0.85rem" }}>
+            <span className="icon-tile" style={{ marginBottom: 0 }}>
+              <IconBuilding />
+            </span>
+            <div>
+              <h2 style={{ fontSize: "1.05rem" }}>{business.legal_name}</h2>
+              <p className="muted" style={{ fontSize: "0.82rem" }}>
+                {business.business_type
+                  ? BUSINESS_TYPE_LABELS[business.business_type] ?? business.business_type
+                  : "Business details"}
+              </p>
+            </div>
           </div>
-        </div>
+        </section>
+
+        <OfficerCard />
+
         <SignOutButton />
-      </div>
+      </aside>
 
-      <section className="card" style={{ marginBottom: "1.25rem" }}>
-        <h2 style={{ fontSize: "1.1rem", marginBottom: "1rem" }}>Business details</h2>
-        <dl className="data-list">
-          <div className="data-row">
-            <dt>Business name</dt>
-            <dd>{business.legal_name}</dd>
-          </div>
-          <div className="data-row">
-            <dt>Business type</dt>
-            <dd>
-              {business.business_type
-                ? BUSINESS_TYPE_LABELS[business.business_type] ?? business.business_type
-                : "Not provided"}
-            </dd>
-          </div>
-          <div className="data-row">
-            <dt>Number of employees</dt>
-            <dd>{profile?.number_of_employees ?? "Not provided"}</dd>
-          </div>
-          <div className="data-row">
-            <dt>VAT registered</dt>
-            <dd>
-              <StatusPill value={profile?.is_vat_registered} />
-            </dd>
-          </div>
-          <div className="data-row">
-            <dt>PAYE registered</dt>
-            <dd>
-              <StatusPill value={profile?.paye_currently_remitted} />
-            </dd>
-          </div>
-        </dl>
-      </section>
+      <div className="dashboard-main">
+        <section className="card" style={{ marginBottom: "1.25rem" }}>
+          <h2 style={{ fontSize: "1.1rem", marginBottom: "1rem" }}>Business details</h2>
+          <dl className="data-list">
+            <div className="data-row">
+              <dt>Business name</dt>
+              <dd>{business.legal_name}</dd>
+            </div>
+            <div className="data-row">
+              <dt>Business type</dt>
+              <dd>
+                {business.business_type
+                  ? BUSINESS_TYPE_LABELS[business.business_type] ?? business.business_type
+                  : "Not provided"}
+              </dd>
+            </div>
+            <div className="data-row">
+              <dt>Number of employees</dt>
+              <dd>{profile?.number_of_employees ?? "Not provided"}</dd>
+            </div>
+            <div className="data-row">
+              <dt>VAT registered</dt>
+              <dd>
+                <StatusPill value={profile?.is_vat_registered} />
+              </dd>
+            </div>
+            <div className="data-row">
+              <dt>PAYE registered</dt>
+              <dd>
+                <StatusPill value={profile?.paye_currently_remitted} />
+              </dd>
+            </div>
+          </dl>
+        </section>
 
-      <section className="card">
-        <h2 style={{ fontSize: "1.1rem", marginBottom: "1rem" }}>Compliance Obligations</h2>
+        <section className="card">
+          <h2 style={{ fontSize: "1.1rem", marginBottom: "1rem" }}>Compliance Obligations</h2>
 
-        <div>
-          {DISPLAY_AREAS.map((area) => {
-            const o = obligationByCode.get(area.code);
+          <div>
+            {DISPLAY_AREAS.map((area) => {
+              const o = obligationByCode.get(area.code);
 
-            if (!o || !o.applicabilityStatus) {
+              if (!o || !o.applicabilityStatus) {
+                return (
+                  <div className="result-card" key={area.code}>
+                    <div className="result-card-main">
+                      <span className="icon-tile" style={{ marginBottom: 0 }}>
+                        <IconHelpCircle />
+                      </span>
+                      <div>
+                        <h4>
+                          {area.code} · {area.name}
+                        </h4>
+                        <p>This compliance area isn&apos;t implemented yet.</p>
+                      </div>
+                    </div>
+                    <span className="status-pill status-not_enough_info">Not yet available</span>
+                  </div>
+                );
+              }
+
+              const status = o.applicabilityStatus as ObligationStatus;
+
               return (
                 <div className="result-card" key={area.code}>
                   <div className="result-card-main">
-                    <span className="icon-tile" style={{ marginBottom: 0 }}>
+                    <span
+                      className={`icon-tile ${status === "likely_applicable" ? "green" : ""}`}
+                      style={{ marginBottom: 0 }}
+                    >
                       <IconHelpCircle />
                     </span>
                     <div>
                       <h4>
                         {area.code} · {area.name}
                       </h4>
-                      <p>This compliance area isn&apos;t implemented yet.</p>
+                      {o.reason && <p>{o.reason}</p>}
+                      {o.sourceAuthority && (
+                        <p className="muted" style={{ fontSize: "0.78rem", marginTop: "0.35rem" }}>
+                          Source: {o.sourceAuthority}
+                          {o.sourceUrl && (
+                            <>
+                              {" — "}
+                              <a href={o.sourceUrl} target="_blank" rel="noopener noreferrer">
+                                View source →
+                              </a>
+                            </>
+                          )}
+                        </p>
+                      )}
+                      {o.requiresReview && (
+                        <p className="muted" style={{ fontSize: "0.78rem", marginTop: "0.15rem" }}>
+                          This result is flagged for review — confirm with a professional if you rely on it.
+                        </p>
+                      )}
                     </div>
                   </div>
-                  <span className="status-pill status-not_enough_info">Not yet available</span>
+                  <span className={`status-pill status-${status}`}>{STATUS_LABELS[status]}</span>
                 </div>
               );
-            }
-
-            const status = o.applicabilityStatus as ObligationStatus;
-
-            return (
-              <div className="result-card" key={area.code}>
-                <div className="result-card-main">
-                  <span
-                    className={`icon-tile ${status === "likely_applicable" ? "green" : ""}`}
-                    style={{ marginBottom: 0 }}
-                  >
-                    <IconHelpCircle />
-                  </span>
-                  <div>
-                    <h4>
-                      {area.code} · {area.name}
-                    </h4>
-                    {o.reason && <p>{o.reason}</p>}
-                    {o.sourceAuthority && (
-                      <p className="muted" style={{ fontSize: "0.78rem", marginTop: "0.35rem" }}>
-                        Source: {o.sourceAuthority}
-                        {o.sourceUrl && (
-                          <>
-                            {" — "}
-                            <a href={o.sourceUrl} target="_blank" rel="noopener noreferrer">
-                              View source →
-                            </a>
-                          </>
-                        )}
-                      </p>
-                    )}
-                    {o.requiresReview && (
-                      <p className="muted" style={{ fontSize: "0.78rem", marginTop: "0.15rem" }}>
-                        This result is flagged for review — confirm with a professional if you rely on it.
-                      </p>
-                    )}
-                  </div>
-                </div>
-                <span className={`status-pill status-${status}`}>{STATUS_LABELS[status]}</span>
-              </div>
-            );
-          })}
-        </div>
-      </section>
-
-      <section className="card" style={{ marginTop: "1.25rem" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: "0.85rem" }}>
-          <span className="icon-tile" style={{ marginBottom: 0 }}>
-            <IconMessageQuestion />
-          </span>
-          <div>
-            <h2 style={{ fontSize: "1.05rem" }}>Get your Rulla officer</h2>
-            <p className="muted" style={{ fontSize: "0.85rem" }}>
-              A trained account officer who files what&apos;s due and helps
-              explain your numbers — coming soon.
-            </p>
+            })}
           </div>
-        </div>
-      </section>
+        </section>
+      </div>
     </main>
   );
 }

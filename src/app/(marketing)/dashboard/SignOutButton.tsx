@@ -16,7 +16,7 @@ export default function SignOutButton() {
   }
 
   return (
-    <button type="button" className="btn btn-outline" onClick={handleSignOut} disabled={signingOut}>
+    <button type="button" className="btn btn-outline btn-block" onClick={handleSignOut} disabled={signingOut}>
       {signingOut ? "Signing out..." : "Sign out"}
     </button>
   );
