@@ -6,8 +6,6 @@ import { supabase } from "@/lib/supabase/client";
 import { IconMenu, IconX } from "./icons";
 
 const NAV_LINKS = [
-  { href: "/#product", label: "Product" },
-  { href: "/explore", label: "Explore" },
   { href: "/#how-it-works", label: "How It Works" },
   { href: "/#compliance-areas", label: "Compliance Areas" },
 ];
@@ -69,9 +67,6 @@ export default function Header() {
                 {accountLabel}
               </Link>
             )}
-            <Link href="/assessment" className="btn btn-primary">
-              Check My Compliance
-            </Link>
           </div>
         </div>
 
@@ -97,14 +92,6 @@ export default function Header() {
             {accountLabel}
           </Link>
         )}
-        <Link
-          href="/assessment"
-          className="btn btn-primary"
-          style={{ marginTop: "0.75rem" }}
-          onClick={closeMenu}
-        >
-          Check My Compliance
-        </Link>
       </nav>
     </header>
   );

@@ -48,13 +48,15 @@ html {
   scroll-behavior: smooth;
 }
 
-html,
+/* overflow-x: hidden on html too would force the browser to also give it
+   an auto overflow-y (per the CSS overflow spec, since the two axes can't
+   have mismatched visible/non-visible values) — that turns html into a
+   second scroll container alongside body, and position: sticky elements
+   stick to whichever one the browser decides isn't the one actually being
+   scrolled. Keeping this on body only avoids that. */
 body {
   max-width: 100vw;
   overflow-x: hidden;
-}
-
-body {
   min-height: 100%;
   display: flex;
   flex-direction: column;
@@ -869,13 +871,26 @@ main {
   top: 22px;
   left: 6%;
   height: 2px;
-  background: var(--evergreen);
+  background: linear-gradient(90deg, var(--evergreen) 0%, var(--green) 45%, var(--evergreen) 90%);
+  background-size: 220% 100%;
   width: 0%;
   transition: width 1s var(--ease) 0.2s;
 }
 
 .reveal.is-visible .timeline-fill {
   width: 88%;
+  animation: timelineFlow 3s linear infinite;
+}
+
+@keyframes timelineFlow {
+  from { background-position: 220% 0; }
+  to { background-position: 0% 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal.is-visible .timeline-fill {
+    animation: none;
+  }
 }
 
 .timeline-step {
@@ -933,11 +948,19 @@ main {
     right: auto;
     width: 2px;
     height: auto;
+    background: linear-gradient(180deg, var(--evergreen) 0%, var(--green) 45%, var(--evergreen) 90%);
+    background-size: 100% 220%;
   }
   .reveal.is-visible .timeline-fill {
     width: 2px;
     height: 92%;
+    animation-name: timelineFlowVertical;
   }
+}
+
+@keyframes timelineFlowVertical {
+  from { background-position: 0 220%; }
+  to { background-position: 0 0%; }
 }
 
 /* ==========================================================================

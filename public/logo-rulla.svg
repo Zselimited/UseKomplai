@@ -1,11 +1,20 @@
-<svg width="160" height="48" viewBox="0 0 160 48" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Rulla">
+<svg width="176" height="48" viewBox="0 0 176 48" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Rulla">
+  <rect x="0" y="4" width="40" height="40" rx="11" fill="#0b6b4f" />
+  <path
+    d="M12 23.5l6 6.5 13-15"
+    fill="none"
+    stroke="#ffffff"
+    stroke-width="4.2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
   <text
-    x="0"
-    y="36"
+    x="52"
+    y="33"
     font-family="'Geist', -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif"
     font-weight="800"
-    font-size="38"
-    letter-spacing="-1"
+    font-size="27"
+    letter-spacing="-0.5"
     fill="#111827"
   >Rulla</text>
 </svg>

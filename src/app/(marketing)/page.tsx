@@ -78,8 +78,8 @@ export default function HomePage() {
                 Check My Compliance
                 <IconArrowRight className="btn-arrow" />
               </Link>
-              <Link href="/explore" className="btn btn-outline btn-lg">
-                Explore Rulla
+              <Link href="/#compliance-areas" className="btn btn-outline btn-lg">
+                See Compliance Areas
               </Link>
             </div>
             <div className="hero-microcopy">
@@ -166,7 +166,7 @@ export default function HomePage() {
           </div>
           <div className="compliance-grid">
             {COMPLIANCE_AREAS.map((area) => (
-              <Link href="/explore" className="compliance-card" key={area.code}>
+              <Link href="/assessment" className="compliance-card" key={area.code}>
                 <div className="compliance-card-head">
                   <span className="icon-tile" style={{ marginBottom: 0 }}>
                     <area.icon />
@@ -177,115 +177,11 @@ export default function HomePage() {
                 <h3>{area.name}</h3>
                 <p>{area.description}</p>
                 <span className="explore-link">
-                  Explore <IconArrowRight />
+                  Check my compliance <IconArrowRight />
                 </span>
               </Link>
             ))}
           </div>
-        </div>
-      </section>
-
-      {/* ============ Product experience ============ */}
-      <section className="section" id="product">
-        <div className="container">
-          <div className="section-head">
-            <h2>One place to understand your compliance position.</h2>
-          </div>
-
-          <Reveal>
-            <div className="dashboard-mock">
-              <div className="dashboard-mock-topbar">
-                <span className="dashboard-mock-dot" />
-                <span className="dashboard-mock-dot" />
-                <span className="dashboard-mock-dot" />
-              </div>
-              <div className="dashboard-mock-body">
-                <aside className="dashboard-mock-sidebar">
-                  <div className="nav-item active">Overview</div>
-                  <div className="nav-item">Obligations</div>
-                  <div className="nav-item">Documents</div>
-                  <div className="nav-item">Calendar</div>
-                  <div className="nav-item">Settings</div>
-                </aside>
-                <div className="dashboard-mock-main">
-                  <div
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                      marginBottom: "1.25rem",
-                    }}
-                  >
-                    <h3 style={{ fontSize: "1.05rem" }}>Compliance Overview</h3>
-                    <span className="sample-tag">Sample data</span>
-                  </div>
-
-                  <div className="dashboard-mock-columns">
-                    <div>
-                      <h4 style={{ fontSize: "0.85rem", marginBottom: "0.65rem", color: "var(--muted)" }}>
-                        Compliance areas
-                      </h4>
-                      <div className="viz-items">
-                        {VIZ_ITEMS.map((item) => (
-                          <div className="viz-item" key={item.code}>
-                            <span className="viz-item-label">
-                              <span className="viz-item-code">{item.code}</span>
-                              {item.label}
-                            </span>
-                            <span className={`status-pill status-${item.status}`}>
-                              {item.statusLabel}
-                            </span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-
-                    <div>
-                      <h4 style={{ fontSize: "0.85rem", marginBottom: "0.65rem", color: "var(--muted)" }}>
-                        Business Profile
-                      </h4>
-                      <div className="card-flat" style={{ marginBottom: "1.25rem" }}>
-                        <div className="mini-profile-list">
-                          <div className="mini-profile-row">
-                            <span>Business type</span>
-                            <span>LLC</span>
-                          </div>
-                          <div className="mini-profile-row">
-                            <span>Industry</span>
-                            <span>Retail</span>
-                          </div>
-                          <div className="mini-profile-row">
-                            <span>State</span>
-                            <span>Lagos</span>
-                          </div>
-                          <div className="mini-profile-row">
-                            <span>Employees</span>
-                            <span>8</span>
-                          </div>
-                          <div className="mini-profile-row">
-                            <span>VAT status</span>
-                            <span>Registered</span>
-                          </div>
-                        </div>
-                      </div>
-
-                      <h4 style={{ fontSize: "0.85rem", marginBottom: "0.65rem", color: "var(--muted)" }}>
-                        What needs your attention
-                      </h4>
-                      <div className="attention-row">
-                        <IconAlertCircle />
-                        VAT marked as needs review
-                      </div>
-                      <div className="attention-row">
-                        <IconClock />
-                        WHT marked as may apply
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </Reveal>
         </div>
       </section>
 

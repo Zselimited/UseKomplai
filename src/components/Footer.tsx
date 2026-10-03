@@ -17,12 +17,6 @@ export default function Footer() {
             <h4>Navigation</h4>
             <ul>
               <li>
-                <Link href="/#product">Product</Link>
-              </li>
-              <li>
-                <Link href="/explore">Explore</Link>
-              </li>
-              <li>
                 <Link href="/assessment">Assessment</Link>
               </li>
               <li>
