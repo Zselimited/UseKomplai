@@ -1,8 +1,14 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import { getUserBusiness, getBusinessProfile, getBusinessObligations } from "@/lib/supabase/queries";
-import { STATUS_LABELS, type ObligationStatus } from "@/lib/complianceEngine";
+import { getUserBusiness, getBusinessProfile, getApprovedRules, getBusinessObligations } from "@/lib/supabase/queries";
+import {
+  STATUS_LABELS,
+  businessProfileToEvaluationInput,
+  evaluateCompliance,
+  toEngineRules,
+  type ObligationStatus,
+} from "@/lib/complianceEngine";
 import { IconBuilding, IconHelpCircle, IconMessageQuestion } from "@/components/icons";
 import SignOutButton from "./SignOutButton";
 
@@ -59,6 +65,31 @@ export default async function DashboardPage() {
   }
 
   const profile = await getBusinessProfile(supabase, business.id);
+
+  // Re-run the engine against the currently approved rules on every view,
+  // rather than trusting whatever was saved at onboarding time — a rule
+  // can be approved (or re-versioned) after someone has already signed
+  // up, and their results should reflect that, not a stale snapshot.
+  const rules = toEngineRules(await getApprovedRules(supabase));
+  if (rules.length > 0) {
+    const evaluationInput = businessProfileToEvaluationInput(business, profile);
+    const results = evaluateCompliance(rules, evaluationInput);
+
+    await supabase.from("business_obligations").upsert(
+      results.map((r) => ({
+        business_id: business.id,
+        rule_id: r.ruleId,
+        rule_version_id: r.ruleVersionId,
+        applicability_status: r.status,
+        reason: r.reason,
+        requires_review: r.requiresReview,
+        evaluated_at: new Date().toISOString(),
+        is_active: true,
+      })),
+      { onConflict: "business_id,rule_id" }
+    );
+  }
+
   const obligations = await getBusinessObligations(supabase, business.id);
   const obligationByCode = new Map(obligations.map((o) => [o.ruleCode, o]));
 

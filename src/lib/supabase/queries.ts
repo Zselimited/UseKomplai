@@ -160,10 +160,10 @@ export type BusinessObligationRow = {
 };
 
 /**
- * The saved compliance results for one business — what the dashboard
- * displays. This reads business_obligations rows written at onboarding
- * time (or a future re-evaluation); it never re-runs the engine itself,
- * so the dashboard always shows exactly what was actually saved.
+ * The saved compliance results for one business. This only reads
+ * business_obligations rows — it never runs the engine itself. Callers
+ * that need results to reflect the currently approved rules (e.g. the
+ * dashboard) must re-run and save them first; see dashboard/page.tsx.
  */
 export async function getBusinessObligations(
   supabase: SupabaseClient,
