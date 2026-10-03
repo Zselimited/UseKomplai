@@ -1577,6 +1577,31 @@ form {
   font-size: 0.82rem;
 }
 
+.locked-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.85rem 1.1rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--bg);
+  margin-bottom: 0.6rem;
+}
+
+.locked-row .locked-row-label {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  font-size: 0.9rem;
+  font-weight: 650;
+  color: var(--ink);
+}
+
+.locked-row svg {
+  color: var(--muted);
+}
+
 .disclaimer-box {
   border: 1px solid var(--border);
   background: var(--bg);

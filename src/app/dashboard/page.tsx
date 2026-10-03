@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getUserBusiness, getBusinessProfile, getBusinessObligations } from "@/lib/supabase/queries";
 import { STATUS_LABELS, type ObligationStatus } from "@/lib/complianceEngine";
-import { IconBuilding, IconHelpCircle } from "@/components/icons";
+import { IconBuilding, IconHelpCircle, IconMessageQuestion } from "@/components/icons";
 import SignOutButton from "./SignOutButton";
 
 // The five MVP compliance areas Rulla covers. Only areas with a saved
@@ -190,6 +190,21 @@ export default async function DashboardPage() {
               </div>
             );
           })}
+        </div>
+      </section>
+
+      <section className="card" style={{ marginTop: "1.25rem" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "0.85rem" }}>
+          <span className="icon-tile" style={{ marginBottom: 0 }}>
+            <IconMessageQuestion />
+          </span>
+          <div>
+            <h2 style={{ fontSize: "1.05rem" }}>Get your Rulla officer</h2>
+            <p className="muted" style={{ fontSize: "0.85rem" }}>
+              A trained account officer who files what&apos;s due and helps
+              explain your numbers — coming soon.
+            </p>
+          </div>
         </div>
       </section>
     </main>
