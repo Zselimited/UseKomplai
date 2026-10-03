@@ -9,25 +9,20 @@ import {
   type ObligationStatus,
 } from "@/lib/complianceEngine";
 import { getNextDueDate, urgency } from "@/lib/dueDates";
+import { COMPLIANCE_AREAS } from "@/lib/complianceAreas";
 import { IconBuilding, IconClock } from "@/components/icons";
 import SignOutButton from "./SignOutButton";
 import AccountDetailsCard from "./AccountDetailsCard";
 import OfficerCard from "./OfficerCard";
 import ObligationsGrid, { type ObligationCardData } from "./ObligationsGrid";
 
-// The five MVP compliance areas Rulla covers. Only areas with a saved
-// business_obligations row (i.e. an approved rule existed at onboarding
-// time) show a real result — anything else renders as not-yet-available
-// rather than a guessed or fabricated status. This always renders all
-// five, matching the assessment results page, regardless of how many
-// rows actually exist — see the dashboard body below.
-const DISPLAY_AREAS = [
-  { code: "CAC", name: "CAC Annual Returns" },
-  { code: "VAT", name: "Value Added Tax" },
-  { code: "PAYE", name: "Pay As You Earn" },
-  { code: "WHT", name: "Withholding Tax" },
-  { code: "CIT", name: "Company Income Tax" },
-];
+// Only areas with a saved business_obligations row (i.e. an approved rule
+// existed at onboarding time) show a real result — anything else renders
+// as not-yet-available rather than a guessed or fabricated status. This
+// always renders all five, matching the assessment results page,
+// regardless of how many rows actually exist — see the dashboard body
+// below.
+const DISPLAY_AREAS = COMPLIANCE_AREAS;
 
 export const metadata: Metadata = {
   title: "Dashboard — Rulla",
