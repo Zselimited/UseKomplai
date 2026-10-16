@@ -50,7 +50,7 @@ export default function Header() {
       <div className="container site-header-inner">
         <Link href="/" className="brand">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/logo-rulla.svg" alt="Rulla" className="brand-logo" />
+          <img src="/logo-rulla.png" alt="Rulla" className="brand-logo" />
         </Link>
 
         <div className="header-desktop-only">
