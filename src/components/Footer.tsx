@@ -48,9 +48,14 @@ export default function Footer() {
         </div>
 
         <div className="footer-disclaimer" id="disclaimer">
-          Rulla provides informational compliance guidance. Applicability
-          and requirements may depend on your business, current laws,
-          regulations and official guidance.
+          <span className="disclaimer-full">
+            Rulla provides informational compliance guidance. Applicability
+            and requirements may depend on your business, current laws,
+            regulations and official guidance.
+          </span>
+          <span className="disclaimer-short">
+            Informational guidance only — not professional advice.
+          </span>
         </div>
       </div>
     </footer>

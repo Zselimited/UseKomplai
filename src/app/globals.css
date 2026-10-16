@@ -929,6 +929,16 @@ main {
   }
 }
 
+/* The compliance-overview mock panel is a lot of small text crammed into
+   a small space on a phone screen — it's a nice-to-have illustration on
+   desktop, not essential content, so it's dropped entirely on narrow
+   viewports rather than squeezed. */
+@media (max-width: 640px) {
+  .product-viz {
+    display: none;
+  }
+}
+
 /* ---- Product visualization (hand-built, no images) ---- */
 
 .product-viz {
@@ -989,8 +999,19 @@ main {
   background: var(--white);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-lg);
+  box-shadow: 0 20px 50px -12px rgba(86, 5, 145, 0.35), var(--shadow-lg);
   padding: 1.5rem;
+  overflow: hidden;
+}
+
+.viz-panel::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--brand), var(--accent));
 }
 
 .viz-panel-head {
@@ -1615,6 +1636,19 @@ main {
   padding: 1.5rem 0;
   font-size: 0.78rem;
   color: rgba(255, 255, 255, 0.5);
+}
+
+.disclaimer-short {
+  display: none;
+}
+
+@media (max-width: 640px) {
+  .disclaimer-full {
+    display: none;
+  }
+  .disclaimer-short {
+    display: inline;
+  }
 }
 
 @media (max-width: 760px) {
