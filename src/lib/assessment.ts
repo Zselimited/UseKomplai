@@ -1,32 +1,53 @@
-import { BUSINESS_TYPES, NIGERIAN_STATES, EMPLOYEE_RANGES } from "@/lib/nigeria";
+import {
+  BUSINESS_TYPES,
+  NIGERIAN_STATES,
+  EMPLOYEE_RANGES,
+  TURNOVER_BANDS,
+  INDUSTRIES,
+  FILING_STATUS_OPTIONS,
+  PAYE_FILING_STATUS_OPTIONS,
+  CAC_LAST_RETURN_OPTIONS,
+  registrationYearOptions,
+} from "@/lib/nigeria";
 
 export type YesNo = "yes" | "no" | "";
-export type YesNoUnsure = "yes" | "no" | "unsure" | "";
 
 export type AssessmentAnswers = {
-  businessType: string;
   registered: YesNo;
-  state: string;
+  businessType: string;
+  cacRegNumber: string;
+  yearRegistered: string;
   industry: string;
+  businessDescription: string;
+  state: string;
+  multiState: YesNo;
+  annualTurnover: string;
   hasEmployees: YesNo;
   employeeRange: string;
-  hasTin: YesNo;
-  vatRegistered: YesNo;
   paysContractors: YesNo;
-  sellsTaxableGoods: YesNoUnsure;
+  vatFilingStatus: string;
+  payeFilingStatus: string;
+  whtFilingStatus: string;
+  cacLastReturn: string;
 };
 
 export const EMPTY_ANSWERS: AssessmentAnswers = {
-  businessType: "",
   registered: "",
-  state: "",
+  businessType: "",
+  cacRegNumber: "",
+  yearRegistered: "",
   industry: "",
+  businessDescription: "",
+  state: "",
+  multiState: "",
+  annualTurnover: "",
   hasEmployees: "",
   employeeRange: "",
-  hasTin: "",
-  vatRegistered: "",
   paysContractors: "",
-  sellsTaxableGoods: "",
+  vatFilingStatus: "",
+  payeFilingStatus: "",
+  whtFilingStatus: "",
+  cacLastReturn: "",
 };
 
 export type QuestionDef =
@@ -57,76 +78,113 @@ const YES_NO_OPTIONS = [
   { value: "no", label: "No" },
 ];
 
-const YES_NO_UNSURE_OPTIONS = [
-  { value: "yes", label: "Yes" },
-  { value: "no", label: "No" },
-  { value: "unsure", label: "I'm not sure" },
-];
-
-// The full question set. "employeeRange" is skipped entirely when the user
-// says they have no employees — keeps the assessment feeling fast rather
-// than asking a question whose answer is already implied.
+// Matches the Business Compliance Profile brief's 16-question set (minus
+// TIN, which no rule condition ever used — see complianceEngine.ts) in
+// the brief's own order. Filing-status questions deliberately keep their
+// nuanced answer ("regularly"/"sometimes"/"no"/"unsure") rather than
+// collapsing to yes/no, so the rule engine can treat "sometimes" and "no"
+// differently instead of guessing.
 export const QUESTIONS: QuestionDef[] = [
-  {
-    id: "businessType",
-    type: "cards",
-    question: "What type of business do you operate?",
-    options: BUSINESS_TYPES,
-  },
   {
     id: "registered",
     type: "cards",
-    question: "Is your business registered?",
+    question: "Is your business registered with CAC?",
     options: YES_NO_OPTIONS,
+  },
+  {
+    id: "businessType",
+    type: "cards",
+    question: "What is your legal structure?",
+    options: BUSINESS_TYPES,
+  },
+  {
+    id: "cacRegNumber",
+    type: "text",
+    question: "What is your CAC registration number?",
+    placeholder: "RC / BN number",
+    skip: (answers) => answers.registered !== "yes",
+  },
+  {
+    id: "yearRegistered",
+    type: "select",
+    question: "What year was your business registered?",
+    options: registrationYearOptions().map((y) => ({ value: y, label: y })),
+    skip: (answers) => answers.registered !== "yes",
+  },
+  {
+    id: "industry",
+    type: "select",
+    question: "What industry does your business operate in?",
+    options: INDUSTRIES.map((i) => ({ value: i, label: i })),
+  },
+  {
+    id: "businessDescription",
+    type: "text",
+    question: "Briefly describe what your business does.",
+    placeholder: "A sentence or two is enough",
   },
   {
     id: "state",
     type: "select",
-    question: "What state is your business based in?",
+    question: "Which state is your main business location?",
     options: NIGERIAN_STATES.map((s) => ({ value: s, label: s })),
   },
   {
-    id: "industry",
-    type: "text",
-    question: "Which industry are you in?",
-    placeholder: "e.g. Retail, Consulting, Logistics",
+    id: "multiState",
+    type: "cards",
+    question: "Do you operate in more than one state?",
+    options: YES_NO_OPTIONS,
   },
   {
-    id: "sellsTaxableGoods",
+    id: "annualTurnover",
     type: "cards",
-    question: "Does your business sell taxable goods or services?",
-    options: YES_NO_UNSURE_OPTIONS,
+    question: "What was your approximate annual turnover in the last financial year?",
+    options: TURNOVER_BANDS,
   },
   {
     id: "hasEmployees",
     type: "cards",
-    question: "Do you have employees?",
+    question: "Do you currently have employees?",
     options: YES_NO_OPTIONS,
   },
   {
     id: "employeeRange",
     type: "cards",
-    question: "How many employees do you have?",
+    question: "How many employees do you currently have?",
     options: EMPLOYEE_RANGES,
     skip: (answers) => answers.hasEmployees !== "yes",
   },
   {
-    id: "hasTin",
-    type: "cards",
-    question: "Do you have a TIN (Tax Identification Number)?",
-    options: YES_NO_OPTIONS,
-  },
-  {
-    id: "vatRegistered",
-    type: "cards",
-    question: "Are you VAT registered?",
-    options: YES_NO_OPTIONS,
-  },
-  {
     id: "paysContractors",
     type: "cards",
-    question: "Do you make payments to contractors or vendors?",
+    question: "Do you regularly pay contractors, consultants, landlords or other service providers?",
     options: YES_NO_OPTIONS,
+  },
+  {
+    id: "vatFilingStatus",
+    type: "cards",
+    question: "Do you currently file VAT returns?",
+    options: FILING_STATUS_OPTIONS,
+  },
+  {
+    id: "payeFilingStatus",
+    type: "cards",
+    question: "Do you currently remit PAYE for employees?",
+    options: PAYE_FILING_STATUS_OPTIONS,
+    skip: (answers) => answers.hasEmployees !== "yes",
+  },
+  {
+    id: "whtFilingStatus",
+    type: "cards",
+    question: "Do you currently deduct or remit WHT?",
+    options: FILING_STATUS_OPTIONS,
+  },
+  {
+    id: "cacLastReturn",
+    type: "select",
+    question: "When did you last file your CAC Annual Return?",
+    options: CAC_LAST_RETURN_OPTIONS,
+    skip: (answers) => answers.registered !== "yes",
   },
 ];
 
@@ -150,8 +208,8 @@ export function loadAssessmentAnswers(): AssessmentAnswers | null {
     const raw = window.localStorage.getItem(STORAGE_KEY);
     if (!raw) return null;
     // Merge over EMPTY_ANSWERS so an older saved payload (from before a
-    // field like sellsTaxableGoods existed) still comes back as a
-    // complete, well-typed object instead of missing keys.
+    // field existed) still comes back as a complete, well-typed object
+    // instead of missing keys.
     return { ...EMPTY_ANSWERS, ...(JSON.parse(raw) as Partial<AssessmentAnswers>) };
   } catch {
     return null;

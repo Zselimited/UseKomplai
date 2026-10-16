@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase/client";
-import { BUSINESS_TYPES, NIGERIAN_STATES } from "@/lib/nigeria";
 import { loadAssessmentAnswers, clearAssessmentAnswers } from "@/lib/assessment";
 import {
   assessmentAnswersToEvaluationInput,
@@ -12,9 +11,6 @@ import {
   toEngineRules,
 } from "@/lib/complianceEngine";
 import { getApprovedRules } from "@/lib/supabase/queries";
-import YesNoCards from "@/components/YesNoCards";
-
-type YesNo = "yes" | "no" | "";
 
 // Read once, outside React state — loadAssessmentAnswers() is itself
 // SSR-safe (it guards on `window` internally), and a lazy useState
@@ -27,21 +23,15 @@ function readSavedAssessment() {
 export default function OnboardingForm() {
   const router = useRouter();
 
-  // If the visitor already completed the public assessment, carry their
-  // answers over instead of asking again. Only fields with a direct,
-  // honest 1:1 match are prefilled — no guessing. Prefilling via lazy
-  // useState initializers (rather than an effect that calls setState)
-  // avoids an extra render pass.
+  // The expanded assessment now collects everything compliance-relevant
+  // (registration status, turnover, filing status for VAT/PAYE/WHT,
+  // CAC return history, business type, industry, state...) — the only
+  // thing it doesn't ask is the business's actual NAME, since that isn't
+  // a compliance fact. Exact employee count is offered here too, as a
+  // refinement over the assessment's range band.
   const [legalName, setLegalName] = useState("");
-  const [rcBnNumber, setRcBnNumber] = useState("");
-  const [businessType, setBusinessType] = useState(() => readSavedAssessment()?.businessType ?? "");
-  const [industry, setIndustry] = useState(() => readSavedAssessment()?.industry ?? "");
-  const [stateOfOperation, setStateOfOperation] = useState(() => readSavedAssessment()?.state ?? "");
   const [numberOfEmployees, setNumberOfEmployees] = useState("");
-  const [tinNumber, setTinNumber] = useState("");
-  const [vatRegistered, setVatRegistered] = useState<YesNo>(() => readSavedAssessment()?.vatRegistered ?? "");
-  const [payeRegistered, setPayeRegistered] = useState<YesNo>("");
-  const [prefilled] = useState(() => readSavedAssessment() !== null);
+  const [hasAssessment] = useState(() => readSavedAssessment() !== null);
 
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
@@ -52,6 +42,9 @@ export default function OnboardingForm() {
     setSubmitting(true);
 
     try {
+      const savedAssessment = loadAssessmentAnswers();
+      const assessmentInput = savedAssessment ? assessmentAnswersToEvaluationInput(savedAssessment) : null;
+
       // If this user already has a business (e.g. they're retrying after
       // a previous partial failure), reuse it instead of creating a
       // second one.
@@ -67,10 +60,10 @@ export default function OnboardingForm() {
           "create_business_with_owner",
           {
             p_legal_name: legalName,
-            p_rc_bn_number: rcBnNumber || null,
-            p_business_type: businessType || null,
-            p_industry: industry || null,
-            p_state_of_operation: stateOfOperation || null,
+            p_rc_bn_number: savedAssessment?.cacRegNumber || null,
+            p_business_type: savedAssessment?.businessType || null,
+            p_industry: savedAssessment?.industry || null,
+            p_state_of_operation: savedAssessment?.state || null,
           }
         );
 
@@ -78,22 +71,29 @@ export default function OnboardingForm() {
         businessId = newBusiness.id as string;
       }
 
-      // The assessment collects hasEmployees/paysContractors/
-      // sellsTaxableGoods/registered, but onboarding has no separate form
-      // control for them (they were already answered pre-signup) — carry
-      // them through silently rather than losing them. If the visitor
-      // skipped the assessment entirely, these all resolve to null, which
-      // is the honest "not answered" state.
-      const savedAssessment = loadAssessmentAnswers();
-      const assessmentInput = savedAssessment ? assessmentAnswersToEvaluationInput(savedAssessment) : null;
+      // description/operates_in_multiple_states/date_registered aren't
+      // part of create_business_with_owner's signature (that function is
+      // deliberately narrow) — set them with a follow-up update, which
+      // businesses_update_members already allows for a business this user
+      // belongs to.
+      const yearRegistered = savedAssessment?.yearRegistered;
+      await supabase
+        .from("businesses")
+        .update({
+          description: savedAssessment?.businessDescription || null,
+          operates_in_multiple_states: assessmentInput?.operates_in_multiple_states ?? null,
+          // Only the year is collected, not a full date — approximated to
+          // 1 January of that year, which is enough for "how long has
+          // this business existed" purposes.
+          date_registered: yearRegistered ? `${yearRegistered}-01-01` : null,
+        })
+        .eq("id", businessId);
 
       const parsedEmployees = numberOfEmployees ? Number(numberOfEmployees) : null;
-      // A number the user just typed here is a more direct signal than an
-      // earlier yes/no from the assessment — prefer it when present.
+      // A number typed here is a more direct signal than the assessment's
+      // yes/no — prefer it when present.
       const hasEmployeesValue =
         parsedEmployees !== null ? parsedEmployees > 0 : assessmentInput?.has_employees ?? null;
-      const isVatRegisteredValue = vatRegistered === "" ? null : vatRegistered === "yes";
-      const hasTinValue = tinNumber ? true : assessmentInput?.has_tin ?? null;
 
       const { error: profileError } = await supabase
         .from("business_profiles")
@@ -104,11 +104,11 @@ export default function OnboardingForm() {
             number_of_employees: parsedEmployees,
             has_employees: hasEmployeesValue,
             uses_contractors: assessmentInput?.uses_contractors ?? null,
-            sells_taxable_goods_or_services: assessmentInput?.sells_taxable_goods_or_services ?? null,
-            tin_number: tinNumber || null,
-            has_tin: hasTinValue,
-            is_vat_registered: isVatRegisteredValue,
-            paye_currently_remitted: payeRegistered === "" ? null : payeRegistered === "yes",
+            estimated_annual_revenue_band: assessmentInput?.annual_turnover_band ?? null,
+            vat_filing_status: assessmentInput?.vat_filing_status ?? null,
+            paye_filing_status: assessmentInput?.paye_filing_status ?? null,
+            wht_filing_status: assessmentInput?.wht_filing_status ?? null,
+            cac_last_return_status: assessmentInput?.cac_last_return_status ?? null,
             diagnostic_completed_at: new Date().toISOString(),
           },
           { onConflict: "business_id" }
@@ -122,15 +122,20 @@ export default function OnboardingForm() {
       const rules = toEngineRules(await getApprovedRules(supabase));
       if (rules.length > 0) {
         const evaluationInput = businessProfileToEvaluationInput(
-          { business_type: businessType || null },
+          {
+            business_type: savedAssessment?.businessType || null,
+            operates_in_multiple_states: assessmentInput?.operates_in_multiple_states ?? null,
+          },
           {
             is_registered: assessmentInput?.is_registered ?? null,
             has_employees: hasEmployeesValue,
             number_of_employees: parsedEmployees,
             uses_contractors: assessmentInput?.uses_contractors ?? null,
-            sells_taxable_goods_or_services: assessmentInput?.sells_taxable_goods_or_services ?? null,
-            is_vat_registered: isVatRegisteredValue,
-            has_tin: hasTinValue,
+            estimated_annual_revenue_band: assessmentInput?.annual_turnover_band ?? null,
+            vat_filing_status: assessmentInput?.vat_filing_status ?? null,
+            paye_filing_status: assessmentInput?.paye_filing_status ?? null,
+            wht_filing_status: assessmentInput?.wht_filing_status ?? null,
+            cac_last_return_status: assessmentInput?.cac_last_return_status ?? null,
           }
         );
         const results = evaluateCompliance(rules, evaluationInput);
@@ -163,10 +168,16 @@ export default function OnboardingForm() {
 
   return (
     <form onSubmit={handleSubmit}>
-      {prefilled && (
+      {hasAssessment ? (
         <div className="notice">
-          We&apos;ve carried over a few answers from your compliance
-          assessment — review and adjust anything below.
+          We&apos;ve saved your compliance assessment answers. Just confirm
+          your business name below to finish setting up your account.
+        </div>
+      ) : (
+        <div className="notice">
+          You haven&apos;t completed a compliance assessment yet — you can
+          still create your account now and take the assessment from your
+          dashboard any time.
         </div>
       )}
 
@@ -181,64 +192,7 @@ export default function OnboardingForm() {
       </div>
 
       <div className="field">
-        <label htmlFor="rcBnNumber">Business registration number (RC/BN)</label>
-        <input
-          id="rcBnNumber"
-          value={rcBnNumber}
-          onChange={(event) => setRcBnNumber(event.target.value)}
-        />
-      </div>
-
-      <div className="field">
-        <label htmlFor="businessType">Business type</label>
-        <select
-          id="businessType"
-          required
-          value={businessType}
-          onChange={(event) => setBusinessType(event.target.value)}
-        >
-          <option value="" disabled>
-            Select a business type
-          </option>
-          {BUSINESS_TYPES.map((type) => (
-            <option key={type.value} value={type.value}>
-              {type.label}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      <div className="field">
-        <label htmlFor="industry">Industry</label>
-        <input
-          id="industry"
-          required
-          value={industry}
-          onChange={(event) => setIndustry(event.target.value)}
-        />
-      </div>
-
-      <div className="field">
-        <label htmlFor="stateOfOperation">State</label>
-        <select
-          id="stateOfOperation"
-          required
-          value={stateOfOperation}
-          onChange={(event) => setStateOfOperation(event.target.value)}
-        >
-          <option value="" disabled>
-            Select a state
-          </option>
-          {NIGERIAN_STATES.map((state) => (
-            <option key={state} value={state}>
-              {state}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      <div className="field">
-        <label htmlFor="numberOfEmployees">Number of employees</label>
+        <label htmlFor="numberOfEmployees">Exact number of employees (optional)</label>
         <input
           id="numberOfEmployees"
           type="number"
@@ -246,31 +200,10 @@ export default function OnboardingForm() {
           value={numberOfEmployees}
           onChange={(event) => setNumberOfEmployees(event.target.value)}
         />
+        <span className="field-hint">
+          Leave blank to just use the range you gave in the assessment.
+        </span>
       </div>
-
-      <div className="field">
-        <label htmlFor="tinNumber">TIN (Tax Identification Number)</label>
-        <input
-          id="tinNumber"
-          value={tinNumber}
-          onChange={(event) => setTinNumber(event.target.value)}
-        />
-        <span className="field-hint">Leave blank if you don&apos;t have one yet.</span>
-      </div>
-
-      <YesNoCards
-        name="vatRegistered"
-        label="VAT registered?"
-        value={vatRegistered}
-        onChange={setVatRegistered}
-      />
-
-      <YesNoCards
-        name="payeRegistered"
-        label="PAYE registered?"
-        value={payeRegistered}
-        onChange={setPayeRegistered}
-      />
 
       {error && <p className="error-text">{error}</p>}
 

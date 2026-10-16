@@ -15,7 +15,7 @@
  * same answer either way.
  */
 
-import type { AssessmentAnswers, YesNo, YesNoUnsure } from "@/lib/assessment";
+import type { AssessmentAnswers, YesNo } from "@/lib/assessment";
 import type { Business, BusinessProfile } from "@/lib/supabase/queries";
 
 // ---- Status vocabulary -----------------------------------------------------
@@ -54,9 +54,17 @@ export type EvaluationInput = {
   has_employees: boolean | null;
   number_of_employees: number | null;
   uses_contractors: boolean | null;
-  sells_taxable_goods_or_services: boolean | null;
-  is_vat_registered: boolean | null;
-  has_tin: boolean | null;
+  operates_in_multiple_states: boolean | null;
+  annual_turnover_band: string | null;
+  // Nuanced filing status ("regularly" | "sometimes" | "no" | "unsure",
+  // PAYE also has "not_applicable") rather than a collapsed boolean, so
+  // rule conditions can treat "sometimes" differently from "no" instead
+  // of guessing.
+  vat_filing_status: string | null;
+  paye_filing_status: string | null;
+  wht_filing_status: string | null;
+  // "this_year" | "last_year" | "over_a_year_ago" | "never" | "unsure".
+  cac_last_return_status: string | null;
 };
 
 export const EMPTY_EVALUATION_INPUT: EvaluationInput = {
@@ -65,22 +73,17 @@ export const EMPTY_EVALUATION_INPUT: EvaluationInput = {
   has_employees: null,
   number_of_employees: null,
   uses_contractors: null,
-  sells_taxable_goods_or_services: null,
-  is_vat_registered: null,
-  has_tin: null,
+  operates_in_multiple_states: null,
+  annual_turnover_band: null,
+  vat_filing_status: null,
+  paye_filing_status: null,
+  wht_filing_status: null,
+  cac_last_return_status: null,
 };
 
 function yesNoToBool(v: YesNo | undefined): boolean | null {
   if (v === "yes") return true;
   if (v === "no") return false;
-  return null;
-}
-
-function yesNoUnsureToBool(v: YesNoUnsure | undefined): boolean | null {
-  if (v === "yes") return true;
-  if (v === "no") return false;
-  // "unsure" and "not answered" both collapse to "unknown" — that's the
-  // honest representation of both cases.
   return null;
 }
 
@@ -95,15 +98,18 @@ export function assessmentAnswersToEvaluationInput(answers: AssessmentAnswers): 
     // where the user types a precise number.
     number_of_employees: null,
     uses_contractors: yesNoToBool(answers.paysContractors),
-    sells_taxable_goods_or_services: yesNoUnsureToBool(answers.sellsTaxableGoods),
-    is_vat_registered: yesNoToBool(answers.vatRegistered),
-    has_tin: yesNoToBool(answers.hasTin),
+    operates_in_multiple_states: yesNoToBool(answers.multiState),
+    annual_turnover_band: answers.annualTurnover || null,
+    vat_filing_status: answers.vatFilingStatus || null,
+    paye_filing_status: answers.payeFilingStatus || null,
+    wht_filing_status: answers.whtFilingStatus || null,
+    cac_last_return_status: answers.cacLastReturn || null,
   };
 }
 
 /** Maps a persisted (post-signup) business + business_profiles row to engine input. */
 export function businessProfileToEvaluationInput(
-  business: Pick<Business, "business_type">,
+  business: Pick<Business, "business_type" | "operates_in_multiple_states">,
   profile: Partial<BusinessProfile> | null
 ): EvaluationInput {
   return {
@@ -112,9 +118,12 @@ export function businessProfileToEvaluationInput(
     has_employees: profile?.has_employees ?? null,
     number_of_employees: profile?.number_of_employees ?? null,
     uses_contractors: profile?.uses_contractors ?? null,
-    sells_taxable_goods_or_services: profile?.sells_taxable_goods_or_services ?? null,
-    is_vat_registered: profile?.is_vat_registered ?? null,
-    has_tin: profile?.has_tin ?? null,
+    operates_in_multiple_states: business.operates_in_multiple_states ?? null,
+    annual_turnover_band: profile?.estimated_annual_revenue_band ?? null,
+    vat_filing_status: profile?.vat_filing_status ?? null,
+    paye_filing_status: profile?.paye_filing_status ?? null,
+    wht_filing_status: profile?.wht_filing_status ?? null,
+    cac_last_return_status: profile?.cac_last_return_status ?? null,
   };
 }
 

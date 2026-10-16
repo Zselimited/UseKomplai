@@ -95,15 +95,30 @@ export default function AssessmentFlow() {
     }
 
     const input = assessmentAnswersToEvaluationInput(next);
+
+    await supabase
+      .from("businesses")
+      .update({
+        business_type: next.businessType || null,
+        rc_bn_number: next.cacRegNumber || null,
+        industry: next.industry || null,
+        state_of_operation: next.state || null,
+        description: next.businessDescription || null,
+        operates_in_multiple_states: input.operates_in_multiple_states,
+      })
+      .eq("id", business.id);
+
     await supabase
       .from("business_profiles")
       .update({
         is_registered: input.is_registered,
         has_employees: input.has_employees,
         uses_contractors: input.uses_contractors,
-        sells_taxable_goods_or_services: input.sells_taxable_goods_or_services,
-        is_vat_registered: input.is_vat_registered,
-        has_tin: input.has_tin,
+        estimated_annual_revenue_band: input.annual_turnover_band,
+        vat_filing_status: input.vat_filing_status,
+        paye_filing_status: input.paye_filing_status,
+        wht_filing_status: input.wht_filing_status,
+        cac_last_return_status: input.cac_last_return_status,
         diagnostic_completed_at: new Date().toISOString(),
       })
       .eq("business_id", business.id);

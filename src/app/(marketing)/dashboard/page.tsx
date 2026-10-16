@@ -28,21 +28,40 @@ export const metadata: Metadata = {
   title: "Dashboard — Rulla",
 };
 
-function StatusPill({ value }: { value: boolean | null | undefined }) {
-  if (value === true) {
-    return <span className="status-pill status-likely_applicable">Yes</span>;
+const FILING_STATUS_LABELS: Record<string, string> = {
+  regularly: "Yes, regularly",
+  sometimes: "Sometimes",
+  no: "No",
+  not_applicable: "Not applicable",
+  unsure: "Not sure",
+};
+
+function FilingStatusPill({ value }: { value: string | null | undefined }) {
+  if (!value) {
+    return <span className="status-pill status-not_enough_info">Not provided</span>;
   }
-  if (value === false) {
-    return <span className="status-pill status-may_apply">No</span>;
-  }
-  return <span className="status-pill status-not_enough_info">Not provided</span>;
+  const label = FILING_STATUS_LABELS[value] ?? value;
+  const tone = value === "regularly" ? "status-likely_applicable" : value === "sometimes" ? "status-needs_review" : "status-may_apply";
+  return <span className={`status-pill ${tone}`}>{label}</span>;
 }
+
+const TURNOVER_BAND_LABELS: Record<string, string> = {
+  none: "Not generating revenue yet",
+  under_5m: "Below ₦5m",
+  "5m_25m": "₦5m–₦25m",
+  "25m_50m": "₦25m–₦50m",
+  "50m_100m": "₦50m–₦100m",
+  "100m_500m": "₦100m–₦500m",
+  above_500m: "Above ₦500m",
+};
 
 const BUSINESS_TYPE_LABELS: Record<string, string> = {
   sole_proprietorship: "Sole Proprietorship / Business Name",
   llc: "Limited Liability Company",
   partnership: "Partnership",
-  ngo: "NGO",
+  llp: "Limited Liability Partnership (LLP)",
+  incorporated_trustee: "Incorporated Trustee (NGO / Association)",
+  other: "Other",
 };
 
 export default async function DashboardPage() {
@@ -167,15 +186,29 @@ export default async function DashboardPage() {
               <dd>{profile?.number_of_employees ?? "Not provided"}</dd>
             </div>
             <div className="data-row">
-              <dt>VAT registered</dt>
+              <dt>Annual turnover</dt>
               <dd>
-                <StatusPill value={profile?.is_vat_registered} />
+                {profile?.estimated_annual_revenue_band
+                  ? TURNOVER_BAND_LABELS[profile.estimated_annual_revenue_band] ?? profile.estimated_annual_revenue_band
+                  : "Not provided"}
               </dd>
             </div>
             <div className="data-row">
-              <dt>PAYE registered</dt>
+              <dt>Files VAT returns</dt>
               <dd>
-                <StatusPill value={profile?.paye_currently_remitted} />
+                <FilingStatusPill value={profile?.vat_filing_status} />
+              </dd>
+            </div>
+            <div className="data-row">
+              <dt>Remits PAYE</dt>
+              <dd>
+                <FilingStatusPill value={profile?.paye_filing_status} />
+              </dd>
+            </div>
+            <div className="data-row">
+              <dt>Deducts/remits WHT</dt>
+              <dd>
+                <FilingStatusPill value={profile?.wht_filing_status} />
               </dd>
             </div>
           </dl>

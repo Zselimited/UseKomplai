@@ -9,6 +9,8 @@ export type Business = {
   date_registered: string | null;
   industry: string | null;
   state_of_operation: string | null;
+  description: string | null;
+  operates_in_multiple_states: boolean | null;
   created_at: string;
   updated_at: string;
 };
@@ -28,6 +30,10 @@ export type BusinessProfile = {
   paye_currently_remitted: boolean | null;
   wht_applies: boolean | null;
   has_tcc: boolean | null;
+  vat_filing_status: string | null;
+  paye_filing_status: string | null;
+  wht_filing_status: string | null;
+  cac_last_return_status: string | null;
   diagnostic_completed_at: string | null;
 };
 
@@ -68,7 +74,7 @@ export async function getUserBusiness(
   const { data, error } = await supabase
     .from("businesses")
     .select(
-      "id, legal_name, trading_name, rc_bn_number, business_type, date_registered, industry, state_of_operation, created_at, updated_at"
+      "id, legal_name, trading_name, rc_bn_number, business_type, date_registered, industry, state_of_operation, description, operates_in_multiple_states, created_at, updated_at"
     )
     .limit(1)
     .maybeSingle();
@@ -87,7 +93,7 @@ export async function getBusinessProfile(
   const { data, error } = await supabase
     .from("business_profiles")
     .select(
-      "id, business_id, is_registered, number_of_employees, has_employees, uses_contractors, estimated_annual_revenue_band, sells_taxable_goods_or_services, is_vat_registered, has_tin, tin_number, paye_currently_remitted, wht_applies, has_tcc, diagnostic_completed_at"
+      "id, business_id, is_registered, number_of_employees, has_employees, uses_contractors, estimated_annual_revenue_band, sells_taxable_goods_or_services, is_vat_registered, has_tin, tin_number, paye_currently_remitted, wht_applies, has_tcc, vat_filing_status, paye_filing_status, wht_filing_status, cac_last_return_status, diagnostic_completed_at"
     )
     .eq("business_id", businessId)
     .maybeSingle();
