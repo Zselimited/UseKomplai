@@ -1,23 +1,23 @@
 /* ==========================================================================
    Rulla design system
-   Light, premium, red-as-brand SaaS look. No dark-mode auto-switching
+   Light, premium, indigo-as-brand SaaS look. No dark-mode auto-switching
    — product deliberately stays light regardless of OS preference.
    ========================================================================== */
 
 :root {
   color-scheme: light;
 
-  /* Palette — red brand system */
-  --brand: #ba0027;
-  --brand-dark: #8a001d;
+  /* Palette — indigo brand system */
+  --brand: #4f46e5;
+  --brand-dark: #4338ca;
   --ink: #111827;
   --bg: #f7fafc;
   --white: #ffffff;
-  --soft-brand: #ffc4c4;
+  --soft-brand: #e0e7ff;
   --orange: #cc4e00;
   --soft-orange: #fbe5d5;
-  --accent: #ff5757;
-  --soft-accent: #ffe3e3;
+  --accent: #818cf8;
+  --soft-accent: #eef1ff;
   --muted: #62748a;
   --border: #e3eaf2;
 
