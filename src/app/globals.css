@@ -181,6 +181,147 @@ select:focus-visible,
   margin-bottom: 1rem;
 }
 
+/* ==========================================================================
+   Editorial display type — used for marketing-page headlines only (not
+   dashboard/forms, which stay plain sans-serif for a "product" feel).
+   ========================================================================== */
+
+.display-heading {
+  font-family: var(--font-fraunces), Georgia, serif;
+  font-weight: 560;
+  letter-spacing: -0.01em;
+}
+
+.display-heading em,
+.accent-italic {
+  font-style: italic;
+  font-weight: 500;
+  color: var(--brand);
+}
+
+/* ==========================================================================
+   Dark section — the alternating color-block rhythm. Every control that
+   normally reads against a light background gets an explicit override
+   here rather than relying on currentColor inheritance, since --ink/
+   --muted/--border assume a light background everywhere else.
+   ========================================================================== */
+
+.section-dark {
+  position: relative;
+  background: radial-gradient(120% 140% at 15% 0%, var(--brand-dark) 0%, #1a0530 65%, #140426 100%);
+  color: var(--white);
+  overflow: hidden;
+}
+
+.section-dark .eyebrow {
+  background: rgba(255, 255, 255, 0.14);
+  color: #e9d5ff;
+}
+
+.section-dark h1,
+.section-dark h2,
+.section-dark h3,
+.section-dark h4 {
+  color: var(--white);
+}
+
+.section-dark p {
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.section-dark .hero-microcopy {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* White cards (the hero's viz-panel mock, compliance-area cards) keep
+   their normal light-mode text colors even when the section around them
+   is dark — the broad .section-dark h1/h2/h3/h4/p rules above would
+   otherwise make their text unreadable against a white card background. */
+.section-dark .viz-panel,
+.section-dark .compliance-card {
+  color: var(--ink);
+}
+
+.section-dark .viz-panel h4,
+.section-dark .compliance-card h3 {
+  color: var(--ink);
+}
+
+.section-dark .viz-panel p,
+.section-dark .compliance-card p {
+  color: var(--muted);
+}
+
+.section-dark .btn-outline {
+  border-color: rgba(255, 255, 255, 0.35);
+  color: var(--white);
+}
+
+.section-dark .btn-outline:hover {
+  border-color: var(--white);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* Soft decorative glow — purely cosmetic, aria-hidden in markup. */
+.section-dark::before {
+  content: "";
+  position: absolute;
+  top: -20%;
+  right: -10%;
+  width: 55%;
+  padding-bottom: 55%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(147, 51, 234, 0.35), transparent 70%);
+  pointer-events: none;
+}
+
+/* ==========================================================================
+   Floating stat badge — a small callout card meant to overlap another
+   element (e.g. sit near the corner of a panel), not flow in normal layout.
+   ========================================================================== */
+
+.floating-badge {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  background: var(--white);
+  color: var(--ink);
+  border-radius: var(--radius-md);
+  padding: 0.85rem 1.1rem;
+  box-shadow: var(--shadow-lg);
+  font-size: 0.78rem;
+}
+
+.floating-badge strong {
+  font-size: 1.3rem;
+  color: var(--brand);
+  font-family: var(--font-fraunces), Georgia, serif;
+}
+
+/* ==========================================================================
+   CTA island — a rounded, contrasting card nested inside a section whose
+   background already differs from it, for the "card floating in a band"
+   look rather than a plain full-width strip.
+   ========================================================================== */
+
+.cta-island {
+  background: radial-gradient(120% 160% at 10% -10%, var(--brand-dark) 0%, #1a0530 70%);
+  border-radius: var(--radius-lg);
+  padding: clamp(2.5rem, 2rem + 2.5vw, 4rem);
+  text-align: center;
+  color: var(--white);
+  position: relative;
+  overflow: hidden;
+}
+
+.cta-island h2 {
+  color: var(--white);
+}
+
+.cta-island p {
+  color: rgba(255, 255, 255, 0.75);
+}
+
 .section-head p {
   margin-top: 0.75rem;
   font-size: 1.05rem;
@@ -217,8 +358,8 @@ main {
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  padding: 0.8rem 1.4rem;
-  border-radius: var(--radius-sm);
+  padding: 0.8rem 1.5rem;
+  border-radius: 999px;
   border: 1px solid var(--border);
   font-size: 0.95rem;
   font-weight: 600;
@@ -791,6 +932,22 @@ main {
 @keyframes floaty {
   0%, 100% { transform: translateY(0) translateX(0); }
   50% { transform: translateY(-14px) translateX(6px); }
+}
+
+.hero-floating-badge {
+  position: absolute;
+  z-index: 2;
+  bottom: -1.25rem;
+  left: -1.25rem;
+  animation: floaty 7s ease-in-out infinite;
+  animation-delay: -1.5s;
+}
+
+@media (max-width: 640px) {
+  .hero-floating-badge {
+    left: 0.5rem;
+    bottom: -1rem;
+  }
 }
 
 .viz-panel {

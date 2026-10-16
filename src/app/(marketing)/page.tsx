@@ -63,11 +63,13 @@ export default function HomePage() {
   return (
     <main>
       {/* ============ 1. Hero ============ */}
-      <section className="hero-section">
+      <section className="hero-section section-dark">
         <div className="container hero-grid">
           <div className="hero-copy">
             <span className="eyebrow">Business compliance, made simpler.</span>
-            <h1>Your business compliance. Finally in one place.</h1>
+            <h1 className="display-heading">
+              Your business compliance. <em>Finally in one place.</em>
+            </h1>
             <p>
               Rulla helps Nigerian businesses understand, assess and
               organise their compliance obligations — without the
@@ -91,6 +93,10 @@ export default function HomePage() {
           <div className="product-viz" aria-hidden="true">
             <div className="viz-floater f1" />
             <div className="viz-floater f2" />
+            <div className="floating-badge hero-floating-badge">
+              <strong>5</strong>
+              Compliance areas covered
+            </div>
             <div className="viz-panel">
               <div className="viz-panel-head">
                 <h4>Compliance Overview</h4>
@@ -140,7 +146,9 @@ export default function HomePage() {
         <div className="container">
           <div className="section-head">
             <span className="eyebrow">How it works</span>
-            <h2>From questions to clarity.</h2>
+            <h2 className="display-heading">
+              From questions to <em>clarity.</em>
+            </h2>
           </div>
 
           <Reveal>
@@ -159,10 +167,13 @@ export default function HomePage() {
       </section>
 
       {/* ============ Compliance areas ============ */}
-      <section className="section" id="compliance-areas">
+      <section className="section section-dark" id="compliance-areas">
         <div className="container">
           <div className="section-head">
-            <h2>Understand the areas that matter to your business.</h2>
+            <span className="eyebrow">Compliance areas</span>
+            <h2 className="display-heading">
+              Understand the areas that <em>matter</em> to your business.
+            </h2>
           </div>
           <div className="compliance-grid">
             {COMPLIANCE_AREAS.map((area) => (
@@ -202,6 +213,32 @@ export default function HomePage() {
               </details>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* ============ Final CTA ============ */}
+      <section className="section">
+        <div className="container">
+          <Reveal>
+            <div className="cta-island">
+              <span className="eyebrow" style={{ background: "rgba(255,255,255,0.14)", color: "#e9d5ff" }}>
+                Get started
+              </span>
+              <h2 className="display-heading">
+                Know what <em>actually applies</em> to your business.
+              </h2>
+              <p style={{ maxWidth: "48ch", margin: "0.75rem auto 2rem" }}>
+                A few minutes of questions, a clearer picture of your
+                compliance position — no account needed to start.
+              </p>
+              <div className="cta-row" style={{ justifyContent: "center" }}>
+                <Link href="/assessment" className="btn btn-primary btn-lg">
+                  Check My Compliance
+                  <IconArrowRight className="btn-arrow" />
+                </Link>
+              </div>
+            </div>
+          </Reveal>
         </div>
       </section>
     </main>
