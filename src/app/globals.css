@@ -7,17 +7,17 @@
 :root {
   color-scheme: light;
 
-  /* Palette — indigo brand system */
-  --brand: #4f46e5;
-  --brand-dark: #4338ca;
+  /* Palette — indigo brand system (exact brand swatch: #560591) */
+  --brand: #560591;
+  --brand-dark: #3d0668;
   --ink: #111827;
   --bg: #f7fafc;
   --white: #ffffff;
-  --soft-brand: #e0e7ff;
+  --soft-brand: #e6d9ee;
   --orange: #cc4e00;
   --soft-orange: #fbe5d5;
-  --accent: #818cf8;
-  --soft-accent: #eef1ff;
+  --accent: #9333ea;
+  --soft-accent: #f3e8ff;
   --muted: #62748a;
   --border: #e3eaf2;
 
