@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useSyncExternalStore } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase/client";
 import { loadAssessmentAnswers, clearAssessmentAnswers } from "@/lib/assessment";
@@ -12,12 +12,21 @@ import {
 } from "@/lib/complianceEngine";
 import { getApprovedRules } from "@/lib/supabase/queries";
 
-// Read once, outside React state — loadAssessmentAnswers() is itself
-// SSR-safe (it guards on `window` internally), and a lazy useState
-// initializer only ever runs on the initial render, so this never touches
-// localStorage on every re-render.
-function readSavedAssessment() {
-  return loadAssessmentAnswers();
+// localStorage doesn't exist during SSR, so reading it during the initial
+// render (e.g. a lazy useState initializer) produces a different result
+// on the server (no localStorage -> false) than on the client's first
+// paint, which is a hydration mismatch. useSyncExternalStore is the
+// React-provided tool for exactly this: it renders getServerSnapshot's
+// value through hydration, then re-syncs to getSnapshot's value right
+// after, with no mismatch warning.
+function subscribeNever() {
+  return () => {};
+}
+function getHasAssessmentSnapshot() {
+  return loadAssessmentAnswers() !== null;
+}
+function getHasAssessmentServerSnapshot() {
+  return false;
 }
 
 export default function OnboardingForm() {
@@ -31,7 +40,11 @@ export default function OnboardingForm() {
   // refinement over the assessment's range band.
   const [legalName, setLegalName] = useState("");
   const [numberOfEmployees, setNumberOfEmployees] = useState("");
-  const [hasAssessment] = useState(() => readSavedAssessment() !== null);
+  const hasAssessment = useSyncExternalStore(
+    subscribeNever,
+    getHasAssessmentSnapshot,
+    getHasAssessmentServerSnapshot
+  );
 
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
@@ -168,18 +181,11 @@ export default function OnboardingForm() {
 
   return (
     <form onSubmit={handleSubmit}>
-      {hasAssessment ? (
-        <div className="notice">
-          We&apos;ve saved your compliance assessment answers. Just confirm
-          your business name below to finish setting up your account.
-        </div>
-      ) : (
-        <div className="notice">
-          You haven&apos;t completed a compliance assessment yet — you can
-          still create your account now and take the assessment from your
-          dashboard any time.
-        </div>
-      )}
+      <div className="notice">
+        {hasAssessment
+          ? "We've saved your compliance assessment answers. Just confirm your business name below to finish setting up your account."
+          : "You haven't completed a compliance assessment yet — you can still create your account now and take the assessment from your dashboard any time."}
+      </div>
 
       <div className="field">
         <label htmlFor="legalName">Business name</label>
