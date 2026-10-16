@@ -55,7 +55,7 @@ export default function AccountDetailsCard({
   }
 
   return (
-    <section className="card" style={{ marginBottom: "1.25rem" }}>
+    <section className="card section-dark account-details-card" style={{ marginBottom: "1.25rem" }}>
       <div
         style={{
           display: "flex",

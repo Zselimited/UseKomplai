@@ -8,7 +8,7 @@ export default function Footer() {
           <div className="footer-brand">
             <Link href="/" className="brand">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/logo-rulla.png" alt="Rulla" className="brand-logo" />
+              <img src="/logo-rulla-white.png" alt="Rulla" className="brand-logo" />
             </Link>
             <p>Business compliance, made simpler.</p>
           </div>
