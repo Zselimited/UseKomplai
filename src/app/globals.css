@@ -1715,6 +1715,19 @@ form {
   color: var(--muted);
 }
 
+.field-label-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.field-label-link {
+  font-size: 0.85rem;
+  color: var(--brand);
+  white-space: nowrap;
+}
+
 .radio-row {
   display: flex;
   gap: 1.5rem;

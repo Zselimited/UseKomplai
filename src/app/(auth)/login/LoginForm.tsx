@@ -55,7 +55,12 @@ export default function LoginForm({ next }: { next: string }) {
         </div>
 
         <div className="field">
-          <label htmlFor="password">Password</label>
+          <div className="field-label-row">
+            <label htmlFor="password">Password</label>
+            <Link href="/forgot-password" className="field-label-link">
+              Forgot password?
+            </Link>
+          </div>
           <div className="field-input-group has-toggle">
             <IconLock />
             <input

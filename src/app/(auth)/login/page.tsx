@@ -9,9 +9,9 @@ export const metadata: Metadata = {
 export default async function LoginPage({
   searchParams,
 }: {
-  searchParams: Promise<{ next?: string }>;
+  searchParams: Promise<{ next?: string; error?: string }>;
 }) {
-  const { next } = await searchParams;
+  const { next, error } = await searchParams;
   const safeNext = next && next.startsWith("/") ? next : "/start";
 
   return (
@@ -36,6 +36,12 @@ export default async function LoginPage({
         <div className="auth-split-card">
           <h2>Log in</h2>
           <p className="muted">Log in to see your business&apos;s compliance dashboard.</p>
+          {error === "link_expired" && (
+            <p className="error-text">
+              That link has expired or was already used. Please request a new
+              one.
+            </p>
+          )}
           <LoginForm next={safeNext} />
         </div>
       </div>
