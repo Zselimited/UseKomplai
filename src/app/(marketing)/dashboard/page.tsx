@@ -203,15 +203,23 @@ export default async function DashboardPage() {
                     </div>
                   </div>
                   {due.kind === "confirmed" ? (
-                    <span className={`deadline-badge deadline-${urgency(due.daysUntil)}`}>
-                      {due.nextDueDate.toLocaleDateString("en-NG", { day: "numeric", month: "short", year: "numeric" })}
-                      {" · "}
-                      {due.daysUntil < 0
-                        ? `${Math.abs(due.daysUntil)}d overdue`
-                        : due.daysUntil === 0
-                          ? "Due today"
-                          : `in ${due.daysUntil}d`}
-                    </span>
+                    <div className="deadline-row-actions">
+                      <span className={`deadline-badge deadline-${urgency(due.daysUntil)}`}>
+                        {due.nextDueDate.toLocaleDateString("en-NG", { day: "numeric", month: "short", year: "numeric" })}
+                        {" · "}
+                        {due.daysUntil < 0
+                          ? `${Math.abs(due.daysUntil)}d overdue`
+                          : due.daysUntil === 0
+                            ? "Due today"
+                            : `in ${due.daysUntil}d`}
+                      </span>
+                      <a
+                        href={`/api/ics?code=${area.code}&date=${due.nextDueDate.toISOString().slice(0, 10)}&label=${encodeURIComponent(`${area.code} · ${due.label}`)}`}
+                        className="btn btn-outline deadline-add-btn"
+                      >
+                        Add to calendar
+                      </a>
+                    </div>
                   ) : (
                     <span className="deadline-badge deadline-unconfirmed">Not yet confirmed</span>
                   )}

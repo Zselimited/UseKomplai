@@ -2492,6 +2492,7 @@ form {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-wrap: wrap;
   gap: 1rem;
   padding: 0.9rem 1.1rem;
   border: 1px solid var(--border);
@@ -2545,6 +2546,18 @@ form {
 .deadline-badge.deadline-unconfirmed {
   background: var(--bg);
   color: var(--muted);
+}
+
+.deadline-row-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.deadline-add-btn {
+  padding: 0.35rem 0.85rem;
+  font-size: 0.78rem;
 }
 
 .locked-row {
