@@ -184,7 +184,7 @@ export default function OnboardingForm() {
       <div className="notice">
         {hasAssessment
           ? "We've saved your compliance assessment answers. Just confirm your business name below to finish setting up your account."
-          : "You haven't completed a compliance assessment yet — you can still create your account now and take the assessment from your dashboard any time."}
+          : "You haven't completed a compliance assessment yet. You can still create your account now and take the assessment from your dashboard any time."}
       </div>
 
       <div className="field">

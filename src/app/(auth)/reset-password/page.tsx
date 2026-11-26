@@ -3,7 +3,7 @@ import Link from "next/link";
 import ResetPasswordForm from "./ResetPasswordForm";
 
 export const metadata: Metadata = {
-  title: "Choose a new password — Rulla",
+  title: "Choose a new password | Rulla",
 };
 
 export default function ResetPasswordPage() {

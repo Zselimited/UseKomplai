@@ -57,19 +57,21 @@ function ObligationCard({ data, index }: { data: ObligationCardData; index: numb
           {data.sourceAuthority && (
             <p className="muted" style={{ fontSize: "0.78rem", marginTop: "0.5rem" }}>
               Source: {data.sourceAuthority}
-              {data.sourceUrl && (
-                <>
-                  {" — "}
-                  <a href={data.sourceUrl} target="_blank" rel="noopener noreferrer">
-                    View source →
-                  </a>
-                </>
-              )}
             </p>
           )}
+          {data.sourceUrl && (
+            <a
+              href={data.sourceUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn btn-outline source-link-btn"
+            >
+              View source
+            </a>
+          )}
           {data.requiresReview && (
-            <p className="muted" style={{ fontSize: "0.78rem", marginTop: "0.25rem" }}>
-              Flagged for review — confirm with a professional if you rely on it.
+            <p className="muted" style={{ fontSize: "0.78rem", marginTop: "0.5rem" }}>
+              Flagged for review. Confirm with a professional if you rely on it.
             </p>
           )}
         </div>

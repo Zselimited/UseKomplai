@@ -43,6 +43,53 @@ function statusImpliesReview(status: ObligationStatus): boolean {
   return status === "needs_review" || status === "not_enough_info";
 }
 
+// ---- Dashboard compliance score --------------------------------------------
+//
+// A single at-a-glance percentage for the dashboard. An area only counts as
+// "handled" when either (a) it doesn't apply to this business at all
+// (not_indicated), or (b) it's applicable AND the business's own reported
+// filing behaviour confirms they're keeping up with it. Everything else
+// (needs_review, may_apply, not_enough_info, or applicable-but-unconfirmed)
+// counts as needing attention. Company Income Tax has no standalone "are you
+// actually filing" signal in the current profile data, so an applicable CIT
+// result always counts as needing attention rather than being guessed at.
+export type FilingStatusSnapshot = {
+  vat: string | null;
+  paye: string | null;
+  wht: string | null;
+  cacLastReturn: string | null;
+};
+
+export function computeComplianceScore(
+  areas: { code: string; status: ObligationStatus | null }[],
+  filingStatus: FilingStatusSnapshot
+): { percent: number; handledCount: number; totalCount: number } {
+  function isHandled(area: { code: string; status: ObligationStatus | null }): boolean {
+    if (!area.status) return false;
+    if (area.status === "not_indicated") return true;
+    if (area.status !== "likely_applicable") return false;
+
+    switch (area.code) {
+      case "VAT":
+        return filingStatus.vat === "regularly";
+      case "PAYE":
+        return filingStatus.paye === "regularly";
+      case "WHT":
+        return filingStatus.wht === "regularly";
+      case "CAC":
+        return filingStatus.cacLastReturn === "this_year";
+      default:
+        return false;
+    }
+  }
+
+  const totalCount = areas.length;
+  const handledCount = areas.filter(isHandled).length;
+  const percent = totalCount === 0 ? 0 : Math.round((handledCount / totalCount) * 100);
+
+  return { percent, handledCount, totalCount };
+}
+
 // ---- The input every rule is evaluated against -----------------------------
 // Field names deliberately match business_profiles/businesses column names
 // 1:1, so anyone writing a rule's `conditions` JSON is reading the same

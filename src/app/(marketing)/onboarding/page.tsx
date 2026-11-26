@@ -5,7 +5,7 @@ import { getUserBusiness } from "@/lib/supabase/queries";
 import OnboardingForm from "./OnboardingForm";
 
 export const metadata: Metadata = {
-  title: "Business Profile — Rulla",
+  title: "Business Profile | Rulla",
 };
 
 export default async function OnboardingPage() {

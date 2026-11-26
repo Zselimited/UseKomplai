@@ -6,6 +6,7 @@ import {
   businessProfileToEvaluationInput,
   evaluateCompliance,
   toEngineRules,
+  computeComplianceScore,
   type ObligationStatus,
 } from "@/lib/complianceEngine";
 import { getNextDueDate, urgency } from "@/lib/dueDates";
@@ -25,7 +26,7 @@ import ObligationsGrid, { type ObligationCardData } from "./ObligationsGrid";
 const DISPLAY_AREAS = COMPLIANCE_AREAS;
 
 export const metadata: Metadata = {
-  title: "Dashboard — Rulla",
+  title: "Dashboard | Rulla",
 };
 
 const FILING_STATUS_LABELS: Record<string, string> = {
@@ -124,6 +125,16 @@ export default async function DashboardPage() {
     };
   });
 
+  const complianceScore = computeComplianceScore(
+    obligationCards.map((c) => ({ code: c.code, status: c.status })),
+    {
+      vat: profile?.vat_filing_status ?? null,
+      paye: profile?.paye_filing_status ?? null,
+      wht: profile?.wht_filing_status ?? null,
+      cacLastReturn: profile?.cac_last_return_status ?? null,
+    }
+  );
+
   // Only an obligation Rulla is actually confident applies gets a deadline
   // shown — there's no point telling someone when a filing is due for an
   // area that doesn't (or might not) apply to them.
@@ -166,7 +177,77 @@ export default async function DashboardPage() {
       </aside>
 
       <div className="dashboard-main">
+        <section className="card compliance-score-card" style={{ marginBottom: "1.25rem" }}>
+          <div className="compliance-score-ring" style={{ "--score": complianceScore.percent } as React.CSSProperties}>
+            <span className="compliance-score-number">{complianceScore.percent}%</span>
+          </div>
+          <div>
+            <h2 style={{ fontSize: "1.1rem", marginBottom: "0.25rem" }}>
+              {complianceScore.percent}% compliant
+            </h2>
+            <p className="muted" style={{ fontSize: "0.85rem" }}>
+              Based on the {complianceScore.totalCount} areas Rulla checks and
+              the filing habits you&apos;ve told us about. Not a legal
+              certification, just a quick status snapshot.
+            </p>
+          </div>
+        </section>
+
         <section className="card" style={{ marginBottom: "1.25rem" }}>
+          <h2 style={{ fontSize: "1.1rem", marginBottom: "0.4rem" }}>Compliance Obligations</h2>
+          <p className="muted" style={{ fontSize: "0.85rem", marginBottom: "1.25rem" }}>
+            Tap a card for the full reasoning and source behind each result.
+          </p>
+          <ObligationsGrid items={obligationCards} />
+        </section>
+
+        <section className="card" style={{ marginBottom: "1.25rem" }}>
+          <h2 style={{ fontSize: "1.1rem", marginBottom: "1rem" }}>Upcoming deadlines</h2>
+
+          {deadlines.length === 0 ? (
+            <p className="muted">
+              No confirmed deadlines yet. This fills in once an area is
+              marked likely applicable to your business.
+            </p>
+          ) : (
+            <div className="deadline-list">
+              {deadlines.map(({ area, due }) => (
+                <div className="deadline-row" key={area.code}>
+                  <div className="deadline-row-main">
+                    <span className="icon-tile" style={{ marginBottom: 0 }}>
+                      <IconClock />
+                    </span>
+                    <div>
+                      <h4>
+                        {area.code} · {due.label}
+                      </h4>
+                      {due.kind === "unconfirmed" && (
+                        <p className="muted" style={{ fontSize: "0.82rem" }}>
+                          Cadence known, but Rulla hasn&apos;t confirmed the exact day. Check with the Nigeria Revenue Service or a professional.
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                  {due.kind === "confirmed" ? (
+                    <span className={`deadline-badge deadline-${urgency(due.daysUntil)}`}>
+                      {due.nextDueDate.toLocaleDateString("en-NG", { day: "numeric", month: "short", year: "numeric" })}
+                      {" · "}
+                      {due.daysUntil < 0
+                        ? `${Math.abs(due.daysUntil)}d overdue`
+                        : due.daysUntil === 0
+                          ? "Due today"
+                          : `in ${due.daysUntil}d`}
+                    </span>
+                  ) : (
+                    <span className="deadline-badge deadline-unconfirmed">Not yet confirmed</span>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+        </section>
+
+        <section className="card">
           <h2 style={{ fontSize: "1.1rem", marginBottom: "1rem" }}>Business details</h2>
           <dl className="data-list">
             <div className="data-row">
@@ -212,60 +293,6 @@ export default async function DashboardPage() {
               </dd>
             </div>
           </dl>
-        </section>
-
-        <section className="card" style={{ marginBottom: "1.25rem" }}>
-          <h2 style={{ fontSize: "1.1rem", marginBottom: "1rem" }}>Upcoming deadlines</h2>
-
-          {deadlines.length === 0 ? (
-            <p className="muted">
-              No confirmed deadlines yet — this fills in once an area is
-              marked likely applicable to your business.
-            </p>
-          ) : (
-            <div className="deadline-list">
-              {deadlines.map(({ area, due }) => (
-                <div className="deadline-row" key={area.code}>
-                  <div className="deadline-row-main">
-                    <span className="icon-tile" style={{ marginBottom: 0 }}>
-                      <IconClock />
-                    </span>
-                    <div>
-                      <h4>
-                        {area.code} · {due.label}
-                      </h4>
-                      {due.kind === "unconfirmed" && (
-                        <p className="muted" style={{ fontSize: "0.82rem" }}>
-                          Cadence known, but Rulla hasn&apos;t confirmed the exact day — check with the Nigeria Revenue Service or a professional.
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                  {due.kind === "confirmed" ? (
-                    <span className={`deadline-badge deadline-${urgency(due.daysUntil)}`}>
-                      {due.nextDueDate.toLocaleDateString("en-NG", { day: "numeric", month: "short", year: "numeric" })}
-                      {" · "}
-                      {due.daysUntil < 0
-                        ? `${Math.abs(due.daysUntil)}d overdue`
-                        : due.daysUntil === 0
-                          ? "Due today"
-                          : `in ${due.daysUntil}d`}
-                    </span>
-                  ) : (
-                    <span className="deadline-badge deadline-unconfirmed">Not yet confirmed</span>
-                  )}
-                </div>
-              ))}
-            </div>
-          )}
-        </section>
-
-        <section className="card">
-          <h2 style={{ fontSize: "1.1rem", marginBottom: "0.4rem" }}>Compliance Obligations</h2>
-          <p className="muted" style={{ fontSize: "0.85rem", marginBottom: "1.25rem" }}>
-            Tap a card for the full reasoning and source behind each result.
-          </p>
-          <ObligationsGrid items={obligationCards} />
         </section>
       </div>
     </main>

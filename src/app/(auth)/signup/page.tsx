@@ -3,7 +3,7 @@ import Link from "next/link";
 import SignupForm from "./SignupForm";
 
 export const metadata: Metadata = {
-  title: "Sign up — Rulla",
+  title: "Sign up | Rulla",
 };
 
 export default async function SignupPage({

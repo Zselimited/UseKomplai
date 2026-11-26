@@ -43,11 +43,11 @@ const FAQ = [
   },
   {
     q: "Can I check my compliance without creating an account?",
-    a: "Yes. The compliance assessment is free to start and doesn't require an account — you'll only need one if you want to save your results.",
+    a: "Yes. The compliance assessment is free to start and doesn't require an account; you'll only need one if you want to save your results.",
   },
   {
     q: "How does the compliance assessment work?",
-    a: "You answer a short series of questions about your business — type, registration status, employees and a few others — and Rulla gives you a preliminary view of which compliance areas may be relevant.",
+    a: "You answer a short series of questions about your business (type, registration status, employees and a few others), and Rulla gives you a preliminary view of which compliance areas may be relevant.",
   },
   {
     q: "Does Rulla provide legal or tax advice?",
@@ -72,7 +72,7 @@ export default function HomePage() {
             </h1>
             <p>
               Rulla helps Nigerian businesses understand, assess and
-              organise their compliance obligations — without the
+              organise their compliance obligations, without the
               confusion.
             </p>
             <div className="hero-cta-row">
@@ -134,7 +134,7 @@ export default function HomePage() {
                 ))}
               </div>
               <p className="viz-disclaimer">
-                Illustrative product preview — not real regulatory data.
+                Illustrative product preview, not real regulatory data.
               </p>
             </div>
           </div>
@@ -229,7 +229,7 @@ export default function HomePage() {
               </h2>
               <p style={{ maxWidth: "48ch", margin: "0.75rem auto 2rem" }}>
                 A few minutes of questions, a clearer picture of your
-                compliance position — no account needed to start.
+                compliance position. No account needed to start.
               </p>
               <div className="cta-row" style={{ justifyContent: "center" }}>
                 <Link href="/assessment" className="btn btn-primary btn-lg">

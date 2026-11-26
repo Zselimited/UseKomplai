@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Privacy — Rulla",
+  title: "Privacy | Rulla",
 };
 
 export default function PrivacyPage() {

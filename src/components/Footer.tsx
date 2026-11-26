@@ -54,7 +54,7 @@ export default function Footer() {
             regulations and official guidance.
           </span>
           <span className="disclaimer-short">
-            Informational guidance only — not professional advice.
+            Informational guidance only, not professional advice.
           </span>
         </div>
       </div>

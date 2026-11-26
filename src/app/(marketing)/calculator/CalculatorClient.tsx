@@ -72,15 +72,15 @@ function PayeCalculator() {
         </p>
 
         <div className="field">
-          <label htmlFor="pension">Pension (PFA) — annual</label>
+          <label htmlFor="pension">Pension (PFA), annual</label>
           <input id="pension" type="number" min={0} placeholder="e.g. 96,000" value={pension} onChange={(e) => setPension(e.target.value)} />
         </div>
         <div className="field">
-          <label htmlFor="nhis">NHIS contribution — annual</label>
+          <label htmlFor="nhis">NHIS contribution, annual</label>
           <input id="nhis" type="number" min={0} placeholder="e.g. 36,000" value={nhis} onChange={(e) => setNhis(e.target.value)} />
         </div>
         <div className="field">
-          <label htmlFor="nhf">NHF contribution — annual</label>
+          <label htmlFor="nhf">NHF contribution, annual</label>
           <input id="nhf" type="number" min={0} placeholder="e.g. 24,000" value={nhf} onChange={(e) => setNhf(e.target.value)} />
         </div>
         <div className="field">
@@ -230,7 +230,7 @@ export default function CalculatorClient() {
         <strong>2026 PAYE bands</strong> (Nigeria Tax Act, 2025, Fourth Schedule): 0% on the
         first ₦800,000 · 15% up to ₦3,000,000 · 18% up to ₦12,000,000 · 21% up to
         ₦25,000,000 · 23% up to ₦50,000,000 · 25% above ₦50,000,000. VAT standard
-        rate: 7.5%. Withholding tax isn&apos;t included here — its exact rates are set
+        rate: 7.5%. Withholding tax isn&apos;t included here; its exact rates are set
         in separate regulations Rulla hasn&apos;t yet verified.
       </div>
     </div>

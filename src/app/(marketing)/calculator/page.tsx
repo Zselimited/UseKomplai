@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import CalculatorClient from "./CalculatorClient";
 
 export const metadata: Metadata = {
-  title: "Tax Calculator — Rulla",
+  title: "Tax Calculator | Rulla",
   description: "Estimate PAYE and VAT using the 2026 Nigeria Tax Act rates.",
 };
 
@@ -18,7 +18,7 @@ export default function CalculatorPage() {
           <p style={{ marginTop: "0.5rem" }}>
             Estimate PAYE and VAT using the Nigeria Tax Act, 2025 rates
             (effective 1 January 2026). This is an estimate for planning
-            purposes, not a filing figure — confirm with the Nigeria
+            purposes, not a filing figure. Confirm with the Nigeria
             Revenue Service or a professional before relying on it.
           </p>
         </div>

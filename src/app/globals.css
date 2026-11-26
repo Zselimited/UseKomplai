@@ -452,6 +452,50 @@ main {
   width: 100%;
 }
 
+.source-link-btn {
+  margin-top: 0.6rem;
+  padding: 0.45rem 1rem;
+  font-size: 0.82rem;
+}
+
+.compliance-score-card {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.compliance-score-ring {
+  --score: 0;
+  flex-shrink: 0;
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: conic-gradient(var(--brand) calc(var(--score) * 1%), var(--border) 0);
+}
+
+.compliance-score-number {
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  background: var(--white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--ink);
+}
+
+@media (max-width: 520px) {
+  .compliance-score-card {
+    flex-direction: column;
+    text-align: center;
+  }
+}
+
 .btn-arrow {
   display: inline-flex;
   transition: transform 0.2s var(--ease);
@@ -511,6 +555,7 @@ main {
 
 .field-toggle-row {
   display: inline-flex;
+  flex-wrap: wrap;
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   padding: 0.25rem;
@@ -527,7 +572,19 @@ main {
   font-weight: 600;
   color: var(--muted);
   cursor: pointer;
+  min-width: 0;
   transition: background 0.15s var(--ease), color 0.15s var(--ease);
+}
+
+@media (max-width: 420px) {
+  /* Long toggle labels (e.g. "Amount excludes VAT") don't fit side by
+     side on narrow phones — wrapping the row (see .field-toggle-row)
+     handles that, but drop the font slightly too so each button still
+     reads as a single line in the wrapped layout. */
+  .toggle-btn {
+    font-size: 0.82rem;
+    padding: 0.5rem 0.75rem;
+  }
 }
 
 .toggle-btn.is-active {
