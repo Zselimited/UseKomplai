@@ -157,8 +157,10 @@ export default function HomePage() {
               {HOW_IT_WORKS.map((step, i) => (
                 <div className="timeline-step" key={step.title}>
                   <span className="step-num">{String(i + 1).padStart(2, "0")}</span>
-                  <h3>{step.title}</h3>
-                  <p>{step.body}</p>
+                  <div className="timeline-step-body">
+                    <h3>{step.title}</h3>
+                    <p>{step.body}</p>
+                  </div>
                 </div>
               ))}
             </div>

@@ -1349,6 +1349,20 @@ main {
     height: 92%;
     animation-name: timelineFlowVertical;
   }
+
+  /* On the single-column mobile layout the connecting line runs down the
+     left edge through each circle's center — lay the step out as a row
+     (circle, then text) instead of stacking the text under the circle,
+     otherwise the line/circle visually collides with the heading below it. */
+  .timeline-step {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  .timeline-step .step-num {
+    flex-shrink: 0;
+    margin-bottom: 0;
+  }
 }
 
 @keyframes timelineFlowVertical {
