@@ -12,6 +12,7 @@ export type ObligationCardData = {
   sourceAuthority: string | null;
   sourceUrl: string | null;
   requiresReview: boolean | null;
+  needsAction: boolean;
 };
 
 const THEME: Record<string, { tone: string; Icon: typeof IconCheckCircle }> = {
@@ -21,6 +22,18 @@ const THEME: Record<string, { tone: string; Icon: typeof IconCheckCircle }> = {
   not_indicated: { tone: "neutral", Icon: IconHelpCircle },
   not_enough_info: { tone: "neutral", Icon: IconHelpCircle },
 };
+
+function GetOfficerButton() {
+  const [clicked, setClicked] = useState(false);
+  return (
+    <span style={{ display: "inline-flex", flexDirection: "column", alignItems: "flex-start", gap: "0.35rem" }}>
+      <button type="button" className="btn btn-outline source-link-btn" onClick={() => setClicked(true)} style={{ marginTop: 0 }}>
+        Get a Rulla officer
+      </button>
+      {clicked && <span className="coming-soon-badge" style={{ marginTop: 0 }}>Coming soon</span>}
+    </span>
+  );
+}
 
 function ObligationCard({ data, index }: { data: ObligationCardData; index: number }) {
   const [open, setOpen] = useState(false);
@@ -59,7 +72,7 @@ function ObligationCard({ data, index }: { data: ObligationCardData; index: numb
               Source: {data.sourceAuthority}
             </p>
           )}
-          {data.sourceUrl && (
+          {!data.needsAction && data.sourceUrl && (
             <a
               href={data.sourceUrl}
               target="_blank"
@@ -73,6 +86,25 @@ function ObligationCard({ data, index }: { data: ObligationCardData; index: numb
             <p className="muted" style={{ fontSize: "0.78rem", marginTop: "0.5rem" }}>
               Flagged for review. Confirm with a professional if you rely on it.
             </p>
+          )}
+          {data.needsAction && (
+            <div className="obligation-action-box">
+              <p className="obligation-action-label">Need this handled?</p>
+              <div className="obligation-action-buttons">
+                {data.sourceUrl && (
+                  <a
+                    href={data.sourceUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn btn-outline source-link-btn"
+                    style={{ marginTop: 0 }}
+                  >
+                    Go to official source
+                  </a>
+                )}
+                <GetOfficerButton />
+              </div>
+            </div>
           )}
         </div>
       </div>

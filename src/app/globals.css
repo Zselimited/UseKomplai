@@ -634,10 +634,46 @@ main {
     flex-direction: column;
   }
 
-  .dashboard-rail {
-    position: static;
-    flex: 1 1 auto;
-    width: 100%;
+  /* display: contents hands each card straight to .dashboard-shell as a
+     flex item, so order-m-* can interleave cards from the rail and the
+     main column freely — on mobile, obligations should show before
+     identity/account chrome, since that's what people actually open the
+     dashboard to check. */
+  .dashboard-rail,
+  .dashboard-main {
+    display: contents;
+  }
+
+  .order-m-1 { order: 1; }
+  .order-m-2 { order: 2; }
+  .order-m-3 { order: 3; }
+  .order-m-4 { order: 4; }
+  .order-m-5 { order: 5; }
+  .order-m-6 { order: 6; }
+  .order-m-7 { order: 7; }
+}
+
+@media (max-width: 640px) {
+  .dashboard-shell .card {
+    padding: 1.1rem;
+  }
+
+  .obligation-card-trigger {
+    padding: 0.9rem 0.9rem 0.4rem;
+  }
+
+  .obligation-status-badge {
+    margin: 0 0.9rem 0.85rem;
+  }
+
+  .obligation-detail p,
+  .obligation-detail .data-list {
+    padding-left: 0.9rem;
+    padding-right: 0.9rem;
+  }
+
+  .officer-card {
+    padding: 1rem;
   }
 }
 
@@ -2426,6 +2462,25 @@ form {
 .obligation-detail p {
   font-size: 0.85rem;
   padding: 0 1.1rem 1.1rem;
+}
+
+.obligation-action-box {
+  margin: 0 1.1rem 1.1rem;
+  padding-top: 0.85rem;
+  border-top: 1px dashed var(--border);
+}
+
+.obligation-action-label {
+  font-size: 0.8rem;
+  font-weight: 650;
+  color: var(--ink);
+}
+
+.obligation-action-buttons {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  margin-top: 0.6rem;
 }
 
 .deadline-list {

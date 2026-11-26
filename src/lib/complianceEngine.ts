@@ -60,31 +60,37 @@ export type FilingStatusSnapshot = {
   cacLastReturn: string | null;
 };
 
+// Exported separately from computeComplianceScore so the dashboard can also
+// ask "does this specific area need action?" per obligation card, without
+// duplicating the handled/not-handled rule.
+export function isAreaHandled(
+  area: { code: string; status: ObligationStatus | null },
+  filingStatus: FilingStatusSnapshot
+): boolean {
+  if (!area.status) return false;
+  if (area.status === "not_indicated") return true;
+  if (area.status !== "likely_applicable") return false;
+
+  switch (area.code) {
+    case "VAT":
+      return filingStatus.vat === "regularly";
+    case "PAYE":
+      return filingStatus.paye === "regularly";
+    case "WHT":
+      return filingStatus.wht === "regularly";
+    case "CAC":
+      return filingStatus.cacLastReturn === "this_year";
+    default:
+      return false;
+  }
+}
+
 export function computeComplianceScore(
   areas: { code: string; status: ObligationStatus | null }[],
   filingStatus: FilingStatusSnapshot
 ): { percent: number; handledCount: number; totalCount: number } {
-  function isHandled(area: { code: string; status: ObligationStatus | null }): boolean {
-    if (!area.status) return false;
-    if (area.status === "not_indicated") return true;
-    if (area.status !== "likely_applicable") return false;
-
-    switch (area.code) {
-      case "VAT":
-        return filingStatus.vat === "regularly";
-      case "PAYE":
-        return filingStatus.paye === "regularly";
-      case "WHT":
-        return filingStatus.wht === "regularly";
-      case "CAC":
-        return filingStatus.cacLastReturn === "this_year";
-      default:
-        return false;
-    }
-  }
-
   const totalCount = areas.length;
-  const handledCount = areas.filter(isHandled).length;
+  const handledCount = areas.filter((area) => isAreaHandled(area, filingStatus)).length;
   const percent = totalCount === 0 ? 0 : Math.round((handledCount / totalCount) * 100);
 
   return { percent, handledCount, totalCount };

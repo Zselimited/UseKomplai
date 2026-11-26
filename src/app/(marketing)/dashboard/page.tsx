@@ -7,13 +7,15 @@ import {
   evaluateCompliance,
   toEngineRules,
   computeComplianceScore,
+  isAreaHandled,
   type ObligationStatus,
 } from "@/lib/complianceEngine";
 import { getNextDueDate, urgency } from "@/lib/dueDates";
 import { COMPLIANCE_AREAS } from "@/lib/complianceAreas";
-import { IconBuilding, IconClock } from "@/components/icons";
+import { IconClock } from "@/components/icons";
 import SignOutButton from "./SignOutButton";
 import AccountDetailsCard from "./AccountDetailsCard";
+import BusinessDetailsCard from "./BusinessDetailsCard";
 import OfficerCard from "./OfficerCard";
 import ObligationsGrid, { type ObligationCardData } from "./ObligationsGrid";
 
@@ -27,42 +29,6 @@ const DISPLAY_AREAS = COMPLIANCE_AREAS;
 
 export const metadata: Metadata = {
   title: "Dashboard | Rulla",
-};
-
-const FILING_STATUS_LABELS: Record<string, string> = {
-  regularly: "Yes, regularly",
-  sometimes: "Sometimes",
-  no: "No",
-  not_applicable: "Not applicable",
-  unsure: "Not sure",
-};
-
-function FilingStatusPill({ value }: { value: string | null | undefined }) {
-  if (!value) {
-    return <span className="status-pill status-not_enough_info">Not provided</span>;
-  }
-  const label = FILING_STATUS_LABELS[value] ?? value;
-  const tone = value === "regularly" ? "status-likely_applicable" : value === "sometimes" ? "status-needs_review" : "status-may_apply";
-  return <span className={`status-pill ${tone}`}>{label}</span>;
-}
-
-const TURNOVER_BAND_LABELS: Record<string, string> = {
-  none: "Not generating revenue yet",
-  under_5m: "Below ₦5m",
-  "5m_25m": "₦5m–₦25m",
-  "25m_50m": "₦25m–₦50m",
-  "50m_100m": "₦50m–₦100m",
-  "100m_500m": "₦100m–₦500m",
-  above_500m: "Above ₦500m",
-};
-
-const BUSINESS_TYPE_LABELS: Record<string, string> = {
-  sole_proprietorship: "Sole Proprietorship / Business Name",
-  llc: "Limited Liability Company",
-  partnership: "Partnership",
-  llp: "Limited Liability Partnership (LLP)",
-  incorporated_trustee: "Incorporated Trustee (NGO / Association)",
-  other: "Other",
 };
 
 export default async function DashboardPage() {
@@ -112,27 +78,33 @@ export default async function DashboardPage() {
   const obligations = await getBusinessObligations(supabase, business.id);
   const obligationByCode = new Map(obligations.map((o) => [o.ruleCode, o]));
 
+  const filingStatus = {
+    vat: profile?.vat_filing_status ?? null,
+    paye: profile?.paye_filing_status ?? null,
+    wht: profile?.wht_filing_status ?? null,
+    cacLastReturn: profile?.cac_last_return_status ?? null,
+  };
+
   const obligationCards: ObligationCardData[] = DISPLAY_AREAS.map((area) => {
     const o = obligationByCode.get(area.code);
+    const status = (o?.applicabilityStatus as ObligationStatus | undefined) ?? null;
     return {
       code: area.code,
       name: area.name,
-      status: (o?.applicabilityStatus as ObligationStatus | undefined) ?? null,
+      status,
       reason: o?.reason ?? null,
       sourceAuthority: o?.sourceAuthority ?? null,
       sourceUrl: o?.sourceUrl ?? null,
       requiresReview: o?.requiresReview ?? null,
+      // Only prompt someone to act once there's an actual result to act on
+      // — "not yet available" areas have nothing to point them at yet.
+      needsAction: status !== null && !isAreaHandled({ code: area.code, status }, filingStatus),
     };
   });
 
   const complianceScore = computeComplianceScore(
     obligationCards.map((c) => ({ code: c.code, status: c.status })),
-    {
-      vat: profile?.vat_filing_status ?? null,
-      paye: profile?.paye_filing_status ?? null,
-      wht: profile?.wht_filing_status ?? null,
-      cacLastReturn: profile?.cac_last_return_status ?? null,
-    }
+    filingStatus
   );
 
   // Only an obligation Rulla is actually confident applies gets a deadline
@@ -153,31 +125,33 @@ export default async function DashboardPage() {
   return (
     <main className="page-wide dashboard-shell">
       <aside className="dashboard-rail">
-        <AccountDetailsCard profile={userProfile} fallbackEmail={user.email ?? ""} businessName={business.legal_name} />
+        <div className="order-m-3">
+          <AccountDetailsCard profile={userProfile} fallbackEmail={user.email ?? ""} businessName={business.legal_name} />
+        </div>
 
-        <section className="card" style={{ marginBottom: "1.25rem" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "0.85rem" }}>
-            <span className="icon-tile" style={{ marginBottom: 0 }}>
-              <IconBuilding />
-            </span>
-            <div>
-              <h2 style={{ fontSize: "1.05rem" }}>{business.legal_name}</h2>
-              <p className="muted" style={{ fontSize: "0.82rem" }}>
-                {business.business_type
-                  ? BUSINESS_TYPE_LABELS[business.business_type] ?? business.business_type
-                  : "Business details"}
-              </p>
-            </div>
-          </div>
-        </section>
+        <div className="order-m-4">
+          <BusinessDetailsCard
+            legalName={business.legal_name}
+            businessType={business.business_type}
+            numberOfEmployees={profile?.number_of_employees ?? null}
+            turnoverBand={profile?.estimated_annual_revenue_band}
+            vatFilingStatus={profile?.vat_filing_status}
+            payeFilingStatus={profile?.paye_filing_status}
+            whtFilingStatus={profile?.wht_filing_status}
+          />
+        </div>
 
-        <OfficerCard />
+        <div className="order-m-6">
+          <OfficerCard />
+        </div>
 
-        <SignOutButton />
+        <div className="order-m-7">
+          <SignOutButton />
+        </div>
       </aside>
 
       <div className="dashboard-main">
-        <section className="card compliance-score-card" style={{ marginBottom: "1.25rem" }}>
+        <section className="card compliance-score-card order-m-1" style={{ marginBottom: "1.25rem" }}>
           <div className="compliance-score-ring" style={{ "--score": complianceScore.percent } as React.CSSProperties}>
             <span className="compliance-score-number">{complianceScore.percent}%</span>
           </div>
@@ -193,7 +167,7 @@ export default async function DashboardPage() {
           </div>
         </section>
 
-        <section className="card" style={{ marginBottom: "1.25rem" }}>
+        <section className="card order-m-2" style={{ marginBottom: "1.25rem" }}>
           <h2 style={{ fontSize: "1.1rem", marginBottom: "0.4rem" }}>Compliance Obligations</h2>
           <p className="muted" style={{ fontSize: "0.85rem", marginBottom: "1.25rem" }}>
             Tap a card for the full reasoning and source behind each result.
@@ -201,7 +175,7 @@ export default async function DashboardPage() {
           <ObligationsGrid items={obligationCards} />
         </section>
 
-        <section className="card" style={{ marginBottom: "1.25rem" }}>
+        <section className="card order-m-5" style={{ marginBottom: "1.25rem" }}>
           <h2 style={{ fontSize: "1.1rem", marginBottom: "1rem" }}>Upcoming deadlines</h2>
 
           {deadlines.length === 0 ? (
@@ -245,54 +219,6 @@ export default async function DashboardPage() {
               ))}
             </div>
           )}
-        </section>
-
-        <section className="card">
-          <h2 style={{ fontSize: "1.1rem", marginBottom: "1rem" }}>Business details</h2>
-          <dl className="data-list">
-            <div className="data-row">
-              <dt>Business name</dt>
-              <dd>{business.legal_name}</dd>
-            </div>
-            <div className="data-row">
-              <dt>Business type</dt>
-              <dd>
-                {business.business_type
-                  ? BUSINESS_TYPE_LABELS[business.business_type] ?? business.business_type
-                  : "Not provided"}
-              </dd>
-            </div>
-            <div className="data-row">
-              <dt>Number of employees</dt>
-              <dd>{profile?.number_of_employees ?? "Not provided"}</dd>
-            </div>
-            <div className="data-row">
-              <dt>Annual turnover</dt>
-              <dd>
-                {profile?.estimated_annual_revenue_band
-                  ? TURNOVER_BAND_LABELS[profile.estimated_annual_revenue_band] ?? profile.estimated_annual_revenue_band
-                  : "Not provided"}
-              </dd>
-            </div>
-            <div className="data-row">
-              <dt>Files VAT returns</dt>
-              <dd>
-                <FilingStatusPill value={profile?.vat_filing_status} />
-              </dd>
-            </div>
-            <div className="data-row">
-              <dt>Remits PAYE</dt>
-              <dd>
-                <FilingStatusPill value={profile?.paye_filing_status} />
-              </dd>
-            </div>
-            <div className="data-row">
-              <dt>Deducts/remits WHT</dt>
-              <dd>
-                <FilingStatusPill value={profile?.wht_filing_status} />
-              </dd>
-            </div>
-          </dl>
         </section>
       </div>
     </main>
