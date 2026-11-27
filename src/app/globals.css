@@ -460,7 +460,7 @@ main {
 
 .compliance-score-card {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 1.25rem;
 }
 
@@ -530,19 +530,38 @@ main {
 
 @media (max-width: 520px) {
   .compliance-score-card {
-    gap: 0.9rem;
+    gap: 0.75rem;
   }
 
   .compliance-score-ring {
-    width: 56px;
-    height: 56px;
+    width: 48px;
+    height: 48px;
     flex-shrink: 0;
+    margin-top: 0.15rem;
   }
 
   .compliance-score-number {
-    width: 44px;
-    height: 44px;
+    width: 38px;
+    height: 38px;
+    font-size: 0.68rem;
+  }
+
+  .compliance-score-card h2 {
+    font-size: 1rem;
+  }
+
+  .compliance-score-card p {
     font-size: 0.8rem;
+    line-height: 1.35;
+  }
+
+  .score-attention {
+    margin-top: 0.6rem;
+    padding-top: 0.6rem;
+  }
+
+  .score-attention-chips {
+    margin: 0.4rem 0 0;
   }
 }
 
@@ -892,6 +911,13 @@ main {
   gap: 1rem;
   padding: 1.15rem 0;
   transition: padding 0.25s var(--ease);
+}
+
+@media (max-width: 480px) {
+  .site-header .container {
+    padding-left: 1.75rem;
+    padding-right: 1.75rem;
+  }
 }
 
 .site-header.is-scrolled .site-header-inner {
