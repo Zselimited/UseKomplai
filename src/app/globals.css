@@ -510,23 +510,39 @@ main {
 
 .score-attention-chip {
   display: inline-block;
-  padding: 0.25rem 0.65rem;
+  padding: 0.3rem 0.75rem;
   border-radius: 999px;
+  border: none;
+  font: inherit;
   font-size: 0.75rem;
   font-weight: 700;
   background: var(--soft-orange);
   color: var(--orange);
+  cursor: pointer;
+  transition: background 0.15s var(--ease), transform 0.15s var(--ease);
 }
 
-.score-attention-hint {
-  font-size: 0.78rem;
-  color: var(--muted);
+.score-attention-chip:hover {
+  background: var(--orange);
+  color: var(--white);
+  transform: translateY(-1px);
 }
 
 @media (max-width: 520px) {
   .compliance-score-card {
-    flex-direction: column;
-    text-align: center;
+    gap: 0.9rem;
+  }
+
+  .compliance-score-ring {
+    width: 56px;
+    height: 56px;
+    flex-shrink: 0;
+  }
+
+  .compliance-score-number {
+    width: 44px;
+    height: 44px;
+    font-size: 0.8rem;
   }
 }
 

@@ -17,7 +17,8 @@ import SignOutButton from "./SignOutButton";
 import AccountDetailsCard from "./AccountDetailsCard";
 import BusinessDetailsCard from "./BusinessDetailsCard";
 import OfficerCard from "./OfficerCard";
-import ObligationsGrid, { type ObligationCardData } from "./ObligationsGrid";
+import ComplianceOverview from "./ComplianceOverview";
+import { type ObligationCardData } from "./ObligationsGrid";
 
 // Only areas with a saved business_obligations row (i.e. an approved rule
 // existed at onboarding time) show a real result — anything else renders
@@ -106,7 +107,6 @@ export default async function DashboardPage() {
     obligationCards.map((c) => ({ code: c.code, status: c.status })),
     filingStatus
   );
-  const attentionAreas = obligationCards.filter((c) => c.needsAction);
 
   // Only an obligation Rulla is actually confident applies gets a deadline
   // shown — there's no point telling someone when a filing is due for an
@@ -152,71 +152,22 @@ export default async function DashboardPage() {
       </aside>
 
       <div className="dashboard-main">
-        <section className="card compliance-score-card order-m-1" style={{ marginBottom: "1.25rem" }}>
-          <div className="compliance-score-ring" style={{ "--score": complianceScore.percent } as React.CSSProperties}>
-            <span className="compliance-score-number">{complianceScore.percent}%</span>
-          </div>
-          <div>
-            {complianceScore.totalCount === 0 ? (
-              <>
-                <h2 style={{ fontSize: "1.1rem", marginBottom: "0.25rem" }}>Nothing flagged yet</h2>
-                <p className="muted" style={{ fontSize: "0.85rem" }}>
-                  Based on what you&apos;ve told us, no compliance area
-                  currently applies to your business. This updates as you
-                  add more details.
-                </p>
-              </>
-            ) : (
-              <>
-                <h2 style={{ fontSize: "1.1rem", marginBottom: "0.25rem" }}>
-                  {complianceScore.percent}% compliant
-                </h2>
-                <p className="muted" style={{ fontSize: "0.85rem" }}>
-                  Based on the {complianceScore.totalCount} area
-                  {complianceScore.totalCount === 1 ? "" : "s"} that
-                  currently apply to your business. Not a legal
-                  certification, just a quick status snapshot.
-                </p>
-              </>
-            )}
-
-            {attentionAreas.length > 0 && (
-              <div className="score-attention">
-                <span className="score-attention-label">Still needs attention:</span>
-                <div className="score-attention-chips">
-                  {attentionAreas.map((area) => (
-                    <span key={area.code} className="score-attention-chip">
-                      {area.code}
-                    </span>
-                  ))}
-                </div>
-                <p className="score-attention-hint">Tap its card below for how to fix it.</p>
-              </div>
-            )}
-          </div>
-        </section>
-
-        <section className="card order-m-2" style={{ marginBottom: "1.25rem" }}>
-          <h2 style={{ fontSize: "1.1rem", marginBottom: "0.4rem" }}>Compliance Obligations</h2>
-          <p className="muted" style={{ fontSize: "0.85rem", marginBottom: "1.25rem" }}>
-            Tap a card for the full reasoning and source behind each result.
-          </p>
-          <ObligationsGrid
-            items={obligationCards}
-            businessId={business.id}
-            profileAnswers={{
-              businessType: business.business_type,
-              isRegistered: profile?.is_registered ?? null,
-              hasEmployees: profile?.has_employees ?? null,
-              usesContractors: profile?.uses_contractors ?? null,
-              estimatedAnnualRevenueBand: profile?.estimated_annual_revenue_band ?? null,
-              cacLastReturnStatus: profile?.cac_last_return_status ?? null,
-              vatFilingStatus: profile?.vat_filing_status ?? null,
-              payeFilingStatus: profile?.paye_filing_status ?? null,
-              whtFilingStatus: profile?.wht_filing_status ?? null,
-            }}
-          />
-        </section>
+        <ComplianceOverview
+          obligationCards={obligationCards}
+          businessId={business.id}
+          complianceScore={complianceScore}
+          profileAnswers={{
+            businessType: business.business_type,
+            isRegistered: profile?.is_registered ?? null,
+            hasEmployees: profile?.has_employees ?? null,
+            usesContractors: profile?.uses_contractors ?? null,
+            estimatedAnnualRevenueBand: profile?.estimated_annual_revenue_band ?? null,
+            cacLastReturnStatus: profile?.cac_last_return_status ?? null,
+            vatFilingStatus: profile?.vat_filing_status ?? null,
+            payeFilingStatus: profile?.paye_filing_status ?? null,
+            whtFilingStatus: profile?.wht_filing_status ?? null,
+          }}
+        />
 
         <section className="card order-m-5" style={{ marginBottom: "1.25rem" }}>
           <h2 style={{ fontSize: "1.1rem", marginBottom: "1rem" }}>Upcoming deadlines</h2>

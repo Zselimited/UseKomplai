@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { STATUS_LABELS, type ObligationStatus } from "@/lib/complianceEngine";
 import { buildOfficerWhatsAppLink } from "@/lib/whatsapp";
 import { IconCheckCircle, IconAlertCircle, IconHelpCircle, IconChevronDown } from "@/components/icons";
@@ -56,7 +55,7 @@ function ObligationCardTrigger({ data, index, onOpen }: { data: ObligationCardDa
 
 export type ProfileAnswers = QuickAnswerValues;
 
-function ObligationDetailModal({
+export function ObligationDetailModal({
   data,
   businessId,
   profileAnswers,
@@ -128,30 +127,16 @@ function ObligationDetailModal({
 
 export default function ObligationsGrid({
   items,
-  businessId,
-  profileAnswers,
+  onOpenCode,
 }: {
   items: ObligationCardData[];
-  businessId: string;
-  profileAnswers: ProfileAnswers;
+  onOpenCode: (code: string) => void;
 }) {
-  const [activeCode, setActiveCode] = useState<string | null>(null);
-  const activeItem = items.find((item) => item.code === activeCode) ?? null;
-
   return (
     <div className="obligation-grid">
       {items.map((item, i) => (
-        <ObligationCardTrigger key={item.code} data={item} index={i} onOpen={() => setActiveCode(item.code)} />
+        <ObligationCardTrigger key={item.code} data={item} index={i} onOpen={() => onOpenCode(item.code)} />
       ))}
-
-      {activeItem && (
-        <ObligationDetailModal
-          data={activeItem}
-          businessId={businessId}
-          profileAnswers={profileAnswers}
-          onClose={() => setActiveCode(null)}
-        />
-      )}
     </div>
   );
 }
