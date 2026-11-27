@@ -2,7 +2,9 @@
 
 import { useState } from "react";
 import { STATUS_LABELS, type ObligationStatus } from "@/lib/complianceEngine";
+import { buildOfficerWhatsAppLink } from "@/lib/whatsapp";
 import { IconCheckCircle, IconAlertCircle, IconHelpCircle, IconChevronDown } from "@/components/icons";
+import Modal from "@/components/Modal";
 
 export type ObligationCardData = {
   code: string;
@@ -23,35 +25,14 @@ const THEME: Record<string, { tone: string; Icon: typeof IconCheckCircle }> = {
   not_enough_info: { tone: "neutral", Icon: IconHelpCircle },
 };
 
-function GetOfficerButton() {
-  const [clicked, setClicked] = useState(false);
-  return (
-    <span style={{ display: "inline-flex", flexDirection: "column", alignItems: "flex-start", gap: "0.35rem" }}>
-      <button type="button" className="btn btn-outline source-link-btn" onClick={() => setClicked(true)} style={{ marginTop: 0 }}>
-        Get a Rulla officer
-      </button>
-      {clicked && <span className="coming-soon-badge" style={{ marginTop: 0 }}>Coming soon</span>}
-    </span>
-  );
-}
-
-function ObligationCard({ data, index }: { data: ObligationCardData; index: number }) {
-  const [open, setOpen] = useState(false);
+function ObligationCardTrigger({ data, index, onOpen }: { data: ObligationCardData; index: number; onOpen: () => void }) {
   const theme = (data.status && THEME[data.status]) || THEME.not_enough_info;
   const Icon = theme.Icon;
   const label = data.status ? STATUS_LABELS[data.status] : "Not yet available";
 
   return (
-    <div
-      className={`obligation-card is-${theme.tone} ${open ? "is-open" : ""}`}
-      style={{ animationDelay: `${index * 70}ms` }}
-    >
-      <button
-        type="button"
-        className="obligation-card-trigger"
-        onClick={() => setOpen((v) => !v)}
-        aria-expanded={open}
-      >
+    <div className={`obligation-card is-${theme.tone}`} style={{ animationDelay: `${index * 70}ms` }}>
+      <button type="button" className="obligation-card-trigger" onClick={onOpen}>
         <span className="obligation-icon">
           <Icon />
         </span>
@@ -63,61 +44,78 @@ function ObligationCard({ data, index }: { data: ObligationCardData; index: numb
       </button>
 
       <span className="obligation-status-badge">{label}</span>
-
-      <div className="obligation-detail-wrap">
-        <div className="obligation-detail">
-          <p>{data.reason ?? "This compliance area isn't implemented yet."}</p>
-          {data.sourceAuthority && (
-            <p className="muted" style={{ fontSize: "0.78rem", marginTop: "0.5rem" }}>
-              Source: {data.sourceAuthority}
-            </p>
-          )}
-          {!data.needsAction && data.sourceUrl && (
-            <a
-              href={data.sourceUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="btn btn-outline source-link-btn"
-            >
-              View source
-            </a>
-          )}
-          {data.requiresReview && (
-            <p className="muted" style={{ fontSize: "0.78rem", marginTop: "0.5rem" }}>
-              Flagged for review. Confirm with a professional if you rely on it.
-            </p>
-          )}
-          {data.needsAction && (
-            <div className="obligation-action-box">
-              <p className="obligation-action-label">Need this handled?</p>
-              <div className="obligation-action-buttons">
-                {data.sourceUrl && (
-                  <a
-                    href={data.sourceUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="btn btn-outline source-link-btn"
-                    style={{ marginTop: 0 }}
-                  >
-                    Go to official source
-                  </a>
-                )}
-                <GetOfficerButton />
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
     </div>
   );
 }
 
+function ObligationDetailModal({ data, onClose }: { data: ObligationCardData; onClose: () => void }) {
+  const theme = (data.status && THEME[data.status]) || THEME.not_enough_info;
+  const Icon = theme.Icon;
+  const label = data.status ? STATUS_LABELS[data.status] : "Not yet available";
+  const whatsAppLink = buildOfficerWhatsAppLink(
+    `Hi, I need help getting my ${data.code} (${data.name}) sorted on Rulla.`
+  );
+
+  return (
+    <Modal onClose={onClose}>
+      <div className="modal-detail-head">
+        <span className="obligation-icon">
+          <Icon />
+        </span>
+        <div>
+          <span className="obligation-code">{data.code}</span>
+          <h3>{data.name}</h3>
+        </div>
+      </div>
+
+      <span className="obligation-status-badge" style={{ margin: "0 0 1rem" }}>
+        {label}
+      </span>
+
+      <div className="modal-detail-body">
+        <p>{data.reason ?? "This compliance area isn't implemented yet."}</p>
+        {data.sourceAuthority && <p className="modal-detail-source">Source: {data.sourceAuthority}</p>}
+        {data.requiresReview && (
+          <p className="modal-detail-source">Flagged for review. Confirm with a professional if you rely on it.</p>
+        )}
+
+        {data.needsAction ? (
+          <>
+            <p className="modal-action-prompt">Need help getting your {data.code} sorted?</p>
+            <div className="modal-action-buttons">
+              {data.sourceUrl && (
+                <a href={data.sourceUrl} target="_blank" rel="noopener noreferrer" className="btn-action btn-action-source">
+                  Go to official source
+                </a>
+              )}
+              <a href={whatsAppLink} target="_blank" rel="noopener noreferrer" className="btn-action btn-action-officer">
+                Contact a Rulla officer today
+              </a>
+            </div>
+          </>
+        ) : (
+          data.sourceUrl && (
+            <a href={data.sourceUrl} target="_blank" rel="noopener noreferrer" className="btn-action btn-action-source">
+              View source
+            </a>
+          )
+        )}
+      </div>
+    </Modal>
+  );
+}
+
 export default function ObligationsGrid({ items }: { items: ObligationCardData[] }) {
+  const [activeCode, setActiveCode] = useState<string | null>(null);
+  const activeItem = items.find((item) => item.code === activeCode) ?? null;
+
   return (
     <div className="obligation-grid">
       {items.map((item, i) => (
-        <ObligationCard key={item.code} data={item} index={i} />
+        <ObligationCardTrigger key={item.code} data={item} index={i} onOpen={() => setActiveCode(item.code)} />
       ))}
+
+      {activeItem && <ObligationDetailModal data={activeItem} onClose={() => setActiveCode(null)} />}
     </div>
   );
 }

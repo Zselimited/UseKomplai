@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { IconBuilding, IconChevronDown } from "@/components/icons";
+import Modal from "@/components/Modal";
 
 const FILING_STATUS_LABELS: Record<string, string> = {
   regularly: "Yes, regularly",
@@ -61,23 +62,34 @@ export default function BusinessDetailsCard({
   const typeLabel = businessType ? BUSINESS_TYPE_LABELS[businessType] ?? businessType : "Business details";
 
   return (
-    <div className={`obligation-card is-neutral ${open ? "is-open" : ""}`} style={{ marginBottom: "1.25rem" }}>
-      <button type="button" className="obligation-card-trigger" onClick={() => setOpen((v) => !v)} aria-expanded={open}>
-        <span className="obligation-icon">
-          <IconBuilding />
-        </span>
-        <span className="obligation-card-trigger-text">
-          <h4>{legalName}</h4>
-          <span className="obligation-code" style={{ textTransform: "none" }}>
-            {typeLabel}
+    <>
+      <div className="obligation-card is-neutral" style={{ marginBottom: "1.25rem" }}>
+        <button type="button" className="obligation-card-trigger" onClick={() => setOpen(true)}>
+          <span className="obligation-icon">
+            <IconBuilding />
           </span>
-        </span>
-        <IconChevronDown className="obligation-chevron" />
-      </button>
+          <span className="obligation-card-trigger-text">
+            <h4>{legalName}</h4>
+            <span className="obligation-code" style={{ textTransform: "none" }}>
+              {typeLabel}
+            </span>
+          </span>
+          <IconChevronDown className="obligation-chevron" />
+        </button>
+      </div>
 
-      <div className="obligation-detail-wrap">
-        <div className="obligation-detail">
-          <dl className="data-list" style={{ padding: "0 1.1rem 1.1rem" }}>
+      {open && (
+        <Modal onClose={() => setOpen(false)}>
+          <div className="modal-detail-head">
+            <span className="obligation-icon">
+              <IconBuilding />
+            </span>
+            <div>
+              <h3>{legalName}</h3>
+            </div>
+          </div>
+
+          <dl className="data-list">
             <div className="data-row">
               <dt>Business type</dt>
               <dd>{businessType ? typeLabel : "Not provided"}</dd>
@@ -109,8 +121,8 @@ export default function BusinessDetailsCard({
               </dd>
             </div>
           </dl>
-        </div>
-      </div>
-    </div>
+        </Modal>
+      )}
+    </>
   );
 }
