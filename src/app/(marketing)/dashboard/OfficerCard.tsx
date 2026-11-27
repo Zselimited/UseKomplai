@@ -1,4 +1,4 @@
-import { IconMessageQuestion } from "@/components/icons";
+import { IconMessageQuestion, IconArrowRight } from "@/components/icons";
 import { buildOfficerWhatsAppLink } from "@/lib/whatsapp";
 
 export default function OfficerCard() {
@@ -6,16 +6,23 @@ export default function OfficerCard() {
 
   return (
     <a href={whatsAppLink} target="_blank" rel="noopener noreferrer" className="officer-card">
-      <span className="icon-tile" style={{ marginBottom: 0 }}>
-        <IconMessageQuestion />
-      </span>
-      <div>
-        <h3 style={{ fontSize: "1rem" }}>Get your Rulla officer</h3>
-        <p className="muted" style={{ fontSize: "0.85rem" }}>
-          A trained account officer who files what&apos;s due and helps
-          explain your numbers, over WhatsApp.
-        </p>
+      <div className="officer-card-top">
+        <span className="icon-tile" style={{ marginBottom: 0 }}>
+          <IconMessageQuestion />
+        </span>
+        <span className="officer-card-whatsapp-badge">WhatsApp</span>
       </div>
+
+      <h3>Get your Rulla officer</h3>
+      <p>
+        A trained account officer who files what&apos;s due and helps
+        explain your numbers.
+      </p>
+
+      <span className="officer-card-cta">
+        Chat now
+        <IconArrowRight className="btn-arrow" />
+      </span>
     </a>
   );
 }
