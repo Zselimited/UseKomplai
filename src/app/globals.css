@@ -2631,6 +2631,70 @@ form {
   margin-bottom: 0.85rem;
 }
 
+.modal-quick-edit {
+  margin: 1rem 0;
+  padding: 0.9rem;
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+}
+
+.modal-quick-edit-label {
+  font-size: 0.85rem;
+  font-weight: 650;
+  color: var(--ink);
+  margin-bottom: 0.5rem;
+}
+
+.modal-quick-edit-pills {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.quick-edit-pill {
+  padding: 0.45rem 1rem;
+  border-radius: 999px;
+  border: 1.5px solid var(--border);
+  background: var(--white);
+  color: var(--ink);
+  font-size: 0.85rem;
+  font-weight: 650;
+  cursor: pointer;
+  transition: border-color 0.15s var(--ease), background 0.15s var(--ease), color 0.15s var(--ease);
+}
+
+.quick-edit-pill:hover {
+  border-color: var(--brand);
+}
+
+.quick-edit-pill.is-active {
+  background: var(--brand);
+  border-color: var(--brand);
+  color: var(--white);
+}
+
+.quick-edit-select {
+  width: 100%;
+  padding: 0.6rem 0.75rem;
+  border-radius: var(--radius-sm);
+  border: 1.5px solid var(--border);
+  background: var(--white);
+  color: var(--ink);
+  font-size: 0.88rem;
+  font: inherit;
+  cursor: pointer;
+}
+
+.quick-edit-select:focus-visible {
+  outline: 2px solid var(--brand);
+}
+
+.quick-edit-saved {
+  margin-top: 0.5rem;
+  font-size: 0.78rem;
+  font-weight: 650;
+  color: var(--brand);
+}
+
 .modal-action-prompt {
   font-size: 0.92rem;
   font-weight: 650;

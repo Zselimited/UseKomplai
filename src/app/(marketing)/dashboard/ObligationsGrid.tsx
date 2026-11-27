@@ -5,6 +5,7 @@ import { STATUS_LABELS, type ObligationStatus } from "@/lib/complianceEngine";
 import { buildOfficerWhatsAppLink } from "@/lib/whatsapp";
 import { IconCheckCircle, IconAlertCircle, IconHelpCircle, IconChevronDown } from "@/components/icons";
 import Modal from "@/components/Modal";
+import QuickAnswerForm from "./QuickAnswerForm";
 
 export type ObligationCardData = {
   code: string;
@@ -53,7 +54,25 @@ function ObligationCardTrigger({ data, index, onOpen }: { data: ObligationCardDa
   );
 }
 
-function ObligationDetailModal({ data, onClose }: { data: ObligationCardData; onClose: () => void }) {
+export type ProfileAnswers = {
+  isRegistered: boolean | null;
+  cacLastReturnStatus: string | null;
+  vatFilingStatus: string | null;
+  payeFilingStatus: string | null;
+  whtFilingStatus: string | null;
+};
+
+function ObligationDetailModal({
+  data,
+  businessId,
+  profileAnswers,
+  onClose,
+}: {
+  data: ObligationCardData;
+  businessId: string;
+  profileAnswers: ProfileAnswers;
+  onClose: () => void;
+}) {
   const theme = (data.status && THEME[data.status]) || THEME.not_enough_info;
   const Icon = theme.Icon;
   const label = data.status ? STATUS_LABELS[data.status] : "Not yet available";
@@ -95,6 +114,16 @@ function ObligationDetailModal({ data, onClose }: { data: ObligationCardData; on
         <p>{data.reason ?? "This compliance area isn't implemented yet."}</p>
         {data.sourceAuthority && <p className="modal-detail-source">Source: {data.sourceAuthority}</p>}
 
+        <QuickAnswerForm
+          businessId={businessId}
+          code={data.code}
+          isRegistered={profileAnswers.isRegistered}
+          cacLastReturnStatus={profileAnswers.cacLastReturnStatus}
+          vatFilingStatus={profileAnswers.vatFilingStatus}
+          payeFilingStatus={profileAnswers.payeFilingStatus}
+          whtFilingStatus={profileAnswers.whtFilingStatus}
+        />
+
         <p className="modal-action-prompt">{actionPrompt}</p>
         <div className="modal-action-buttons">
           {data.sourceUrl && (
@@ -111,7 +140,15 @@ function ObligationDetailModal({ data, onClose }: { data: ObligationCardData; on
   );
 }
 
-export default function ObligationsGrid({ items }: { items: ObligationCardData[] }) {
+export default function ObligationsGrid({
+  items,
+  businessId,
+  profileAnswers,
+}: {
+  items: ObligationCardData[];
+  businessId: string;
+  profileAnswers: ProfileAnswers;
+}) {
   const [activeCode, setActiveCode] = useState<string | null>(null);
   const activeItem = items.find((item) => item.code === activeCode) ?? null;
 
@@ -121,7 +158,14 @@ export default function ObligationsGrid({ items }: { items: ObligationCardData[]
         <ObligationCardTrigger key={item.code} data={item} index={i} onOpen={() => setActiveCode(item.code)} />
       ))}
 
-      {activeItem && <ObligationDetailModal data={activeItem} onClose={() => setActiveCode(null)} />}
+      {activeItem && (
+        <ObligationDetailModal
+          data={activeItem}
+          businessId={businessId}
+          profileAnswers={profileAnswers}
+          onClose={() => setActiveCode(null)}
+        />
+      )}
     </div>
   );
 }

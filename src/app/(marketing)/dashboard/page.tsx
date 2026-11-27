@@ -201,7 +201,17 @@ export default async function DashboardPage() {
           <p className="muted" style={{ fontSize: "0.85rem", marginBottom: "1.25rem" }}>
             Tap a card for the full reasoning and source behind each result.
           </p>
-          <ObligationsGrid items={obligationCards} />
+          <ObligationsGrid
+            items={obligationCards}
+            businessId={business.id}
+            profileAnswers={{
+              isRegistered: profile?.is_registered ?? null,
+              cacLastReturnStatus: profile?.cac_last_return_status ?? null,
+              vatFilingStatus: profile?.vat_filing_status ?? null,
+              payeFilingStatus: profile?.paye_filing_status ?? null,
+              whtFilingStatus: profile?.wht_filing_status ?? null,
+            }}
+          />
         </section>
 
         <section className="card order-m-5" style={{ marginBottom: "1.25rem" }}>
