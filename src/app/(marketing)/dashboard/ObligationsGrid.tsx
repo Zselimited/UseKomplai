@@ -57,9 +57,23 @@ function ObligationDetailModal({ data, onClose }: { data: ObligationCardData; on
   const theme = (data.status && THEME[data.status]) || THEME.not_enough_info;
   const Icon = theme.Icon;
   const label = data.status ? STATUS_LABELS[data.status] : "Not yet available";
-  const whatsAppLink = buildOfficerWhatsAppLink(
-    `Hi, I need help getting my ${data.code} (${data.name}) sorted on Rulla.`
-  );
+
+  // Every card gets a confident next step, not just the ones flagged as
+  // needing action — a "not applicable" result is still worth a second
+  // opinion or a pointer to the official rule, not a dead end.
+  let actionPrompt: string;
+  let whatsAppMessage: string;
+  if (data.status === null) {
+    actionPrompt = "Questions about this area?";
+    whatsAppMessage = `Hi, I have a question about ${data.code} (${data.name}) on Rulla.`;
+  } else if (data.needsAction) {
+    actionPrompt = `Need help getting your ${data.code} sorted?`;
+    whatsAppMessage = `Hi, I need help getting my ${data.code} (${data.name}) sorted on Rulla.`;
+  } else {
+    actionPrompt = "Want a Rulla officer to confirm this is right for your business?";
+    whatsAppMessage = `Hi, I'd like a Rulla officer to double-check my ${data.code} (${data.name}) status on Rulla.`;
+  }
+  const whatsAppLink = buildOfficerWhatsAppLink(whatsAppMessage);
 
   return (
     <Modal onClose={onClose}>
@@ -80,31 +94,18 @@ function ObligationDetailModal({ data, onClose }: { data: ObligationCardData; on
       <div className="modal-detail-body">
         <p>{data.reason ?? "This compliance area isn't implemented yet."}</p>
         {data.sourceAuthority && <p className="modal-detail-source">Source: {data.sourceAuthority}</p>}
-        {data.requiresReview && (
-          <p className="modal-detail-source">Flagged for review. Confirm with a professional if you rely on it.</p>
-        )}
 
-        {data.needsAction ? (
-          <>
-            <p className="modal-action-prompt">Need help getting your {data.code} sorted?</p>
-            <div className="modal-action-buttons">
-              {data.sourceUrl && (
-                <a href={data.sourceUrl} target="_blank" rel="noopener noreferrer" className="btn-action btn-action-source">
-                  Go to official source
-                </a>
-              )}
-              <a href={whatsAppLink} target="_blank" rel="noopener noreferrer" className="btn-action btn-action-officer">
-                Contact a Rulla officer today
-              </a>
-            </div>
-          </>
-        ) : (
-          data.sourceUrl && (
+        <p className="modal-action-prompt">{actionPrompt}</p>
+        <div className="modal-action-buttons">
+          {data.sourceUrl && (
             <a href={data.sourceUrl} target="_blank" rel="noopener noreferrer" className="btn-action btn-action-source">
-              View source
+              Official source
             </a>
-          )
-        )}
+          )}
+          <a href={whatsAppLink} target="_blank" rel="noopener noreferrer" className="btn-action btn-action-officer">
+            Contact a Rulla officer today
+          </a>
+        </div>
       </div>
     </Modal>
   );
