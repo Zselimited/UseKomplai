@@ -205,7 +205,11 @@ export default async function DashboardPage() {
             items={obligationCards}
             businessId={business.id}
             profileAnswers={{
+              businessType: business.business_type,
               isRegistered: profile?.is_registered ?? null,
+              hasEmployees: profile?.has_employees ?? null,
+              usesContractors: profile?.uses_contractors ?? null,
+              estimatedAnnualRevenueBand: profile?.estimated_annual_revenue_band ?? null,
               cacLastReturnStatus: profile?.cac_last_return_status ?? null,
               vatFilingStatus: profile?.vat_filing_status ?? null,
               payeFilingStatus: profile?.paye_filing_status ?? null,

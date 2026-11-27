@@ -5,7 +5,7 @@ import { STATUS_LABELS, type ObligationStatus } from "@/lib/complianceEngine";
 import { buildOfficerWhatsAppLink } from "@/lib/whatsapp";
 import { IconCheckCircle, IconAlertCircle, IconHelpCircle, IconChevronDown } from "@/components/icons";
 import Modal from "@/components/Modal";
-import QuickAnswerForm from "./QuickAnswerForm";
+import QuickAnswerForm, { type QuickAnswerValues } from "./QuickAnswerForm";
 
 export type ObligationCardData = {
   code: string;
@@ -54,13 +54,7 @@ function ObligationCardTrigger({ data, index, onOpen }: { data: ObligationCardDa
   );
 }
 
-export type ProfileAnswers = {
-  isRegistered: boolean | null;
-  cacLastReturnStatus: string | null;
-  vatFilingStatus: string | null;
-  payeFilingStatus: string | null;
-  whtFilingStatus: string | null;
-};
+export type ProfileAnswers = QuickAnswerValues;
 
 function ObligationDetailModal({
   data,
@@ -114,15 +108,7 @@ function ObligationDetailModal({
         <p>{data.reason ?? "This compliance area isn't implemented yet."}</p>
         {data.sourceAuthority && <p className="modal-detail-source">Source: {data.sourceAuthority}</p>}
 
-        <QuickAnswerForm
-          businessId={businessId}
-          code={data.code}
-          isRegistered={profileAnswers.isRegistered}
-          cacLastReturnStatus={profileAnswers.cacLastReturnStatus}
-          vatFilingStatus={profileAnswers.vatFilingStatus}
-          payeFilingStatus={profileAnswers.payeFilingStatus}
-          whtFilingStatus={profileAnswers.whtFilingStatus}
-        />
+        <QuickAnswerForm businessId={businessId} code={data.code} values={profileAnswers} />
 
         <p className="modal-action-prompt">{actionPrompt}</p>
         <div className="modal-action-buttons">
