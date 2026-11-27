@@ -63,8 +63,13 @@ export default function BusinessDetailsCard({
 
   return (
     <>
-      <div className="obligation-card is-neutral" style={{ marginBottom: "1.25rem" }}>
-        <button type="button" className="obligation-card-trigger" onClick={() => setOpen(true)}>
+      <button
+        type="button"
+        className="obligation-card is-neutral"
+        style={{ marginBottom: "1.25rem" }}
+        onClick={() => setOpen(true)}
+      >
+        <span className="obligation-card-trigger">
           <span className="obligation-icon">
             <IconBuilding />
           </span>
@@ -75,8 +80,8 @@ export default function BusinessDetailsCard({
             </span>
           </span>
           <IconChevronDown className="obligation-chevron" />
-        </button>
-      </div>
+        </span>
+      </button>
 
       {open && (
         <Modal onClose={() => setOpen(false)}>

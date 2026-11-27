@@ -31,8 +31,13 @@ function ObligationCardTrigger({ data, index, onOpen }: { data: ObligationCardDa
   const label = data.status ? STATUS_LABELS[data.status] : "Not yet available";
 
   return (
-    <div className={`obligation-card is-${theme.tone}`} style={{ animationDelay: `${index * 70}ms` }}>
-      <button type="button" className="obligation-card-trigger" onClick={onOpen}>
+    <button
+      type="button"
+      className={`obligation-card is-${theme.tone}`}
+      style={{ animationDelay: `${index * 70}ms` }}
+      onClick={onOpen}
+    >
+      <span className="obligation-card-trigger">
         <span className="obligation-icon">
           <Icon />
         </span>
@@ -41,10 +46,10 @@ function ObligationCardTrigger({ data, index, onOpen }: { data: ObligationCardDa
           <h4>{data.name}</h4>
         </span>
         <IconChevronDown className="obligation-chevron" />
-      </button>
+      </span>
 
       <span className="obligation-status-badge">{label}</span>
-    </div>
+    </button>
   );
 }
 
