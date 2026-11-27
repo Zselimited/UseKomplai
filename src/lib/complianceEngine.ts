@@ -89,9 +89,16 @@ export function computeComplianceScore(
   areas: { code: string; status: ObligationStatus | null }[],
   filingStatus: FilingStatusSnapshot
 ): { percent: number; handledCount: number; totalCount: number } {
-  const totalCount = areas.length;
-  const handledCount = areas.filter((area) => isAreaHandled(area, filingStatus)).length;
-  const percent = totalCount === 0 ? 0 : Math.round((handledCount / totalCount) * 100);
+  // "not_indicated" (confidently doesn't apply) and null (no result yet)
+  // are excluded from the denominator entirely, rather than counted as
+  // free points — a business with nothing applicable yet has nothing to
+  // be "compliant" about, so it shouldn't inflate the score. Only areas
+  // that are actually relevant (likely_applicable, needs_review,
+  // may_apply, not_enough_info) count toward it.
+  const relevant = areas.filter((area) => area.status !== null && area.status !== "not_indicated");
+  const totalCount = relevant.length;
+  const handledCount = relevant.filter((area) => isAreaHandled(area, filingStatus)).length;
+  const percent = totalCount === 0 ? 100 : Math.round((handledCount / totalCount) * 100);
 
   return { percent, handledCount, totalCount };
 }

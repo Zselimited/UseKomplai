@@ -489,6 +489,40 @@ main {
   color: var(--ink);
 }
 
+.score-attention {
+  margin-top: 0.9rem;
+  padding-top: 0.9rem;
+  border-top: 1px dashed var(--border);
+}
+
+.score-attention-label {
+  font-size: 0.82rem;
+  font-weight: 650;
+  color: var(--ink);
+}
+
+.score-attention-chips {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+  margin: 0.5rem 0;
+}
+
+.score-attention-chip {
+  display: inline-block;
+  padding: 0.25rem 0.65rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  background: var(--soft-orange);
+  color: var(--orange);
+}
+
+.score-attention-hint {
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+
 @media (max-width: 520px) {
   .compliance-score-card {
     flex-direction: column;
@@ -1499,6 +1533,8 @@ main {
    ========================================================================== */
 
 .compliance-grid {
+  position: relative;
+  z-index: 1;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 1.1rem;
